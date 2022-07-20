@@ -27,7 +27,7 @@ export const useLocaleStore = defineStore({
       return !!this.localInfo?.showPicker;
     },
     getLocale(): LocaleType {
-      return this.localInfo?.locale ?? 'zh_CN';
+      return this.localInfo?.locale ?? 'en';
     },
     //update-begin-author:taoyan date:2022-6-1 for: VUEN-1144 online 配置成菜单后，打开菜单，显示名称未展示为菜单名称
     getPathTitle: (state) => {

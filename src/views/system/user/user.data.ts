@@ -3,25 +3,27 @@ import { FormSchema } from '/@/components/Table';
 import { getAllRolesList, getAllTenantList } from './user.api';
 import { rules } from '/@/utils/helper/validator';
 import { render } from '/@/utils/common/renderUtils';
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
 export const columns: BasicColumn[] = [
   {
-    title: '用户账号',
+    title: t('system.user.userAccount'),
     dataIndex: 'username',
     width: 120,
   },
   {
-    title: '用户姓名',
+    title: t('system.user.username'),
     dataIndex: 'realname',
     width: 100,
   },
   {
-    title: '头像',
+    title: t('system.user.avatar'),
     dataIndex: 'avatar',
     width: 120,
     customRender: render.renderAvatar,
   },
   {
-    title: '性别',
+    title: t('system.user.gender'),
     dataIndex: 'sex',
     width: 80,
     sorter: true,
@@ -30,7 +32,7 @@ export const columns: BasicColumn[] = [
     },
   },
   {
-    title: '生日',
+    title: t('system.user.birthday'),
     dataIndex: 'birthday',
     width: 100,
   },
