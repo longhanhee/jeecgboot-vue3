@@ -1,7 +1,4 @@
--- 备份vue2的菜单表（修改原表名）
-alter table sys_permission rename as sys_permission_v2;
-
--- 创建vue3的所使用的菜单表
+DROP TABLE IF EXISTS sys_permission;
 -- ----------------------------
 -- Table structure for sys_permission
 -- ----------------------------
@@ -251,10 +248,10 @@ INSERT INTO `sys_permission` VALUES ('1458389305235984385', '1438108197958311537
 INSERT INTO `sys_permission` VALUES ('190c2b43bec6a5f7a4194a85db67d96a', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '角色管理', '/system/role', 'system/role/index', 1, NULL, NULL, 1, NULL, NULL, 2, 0, 'ant-design:solution', 1, 1, 0, NULL, NULL, NULL, '2018-12-25 20:34:38', 'admin', '2021-09-17 15:58:00', 0, 0, NULL, 0);
 INSERT INTO `sys_permission` VALUES ('1a0811914300741f4e11838ff37a1d3a', '3f915b2769fc80648e92d04e84ca059d', '手机号禁用', '', '', 0, NULL, NULL, 2, 'user:form:phone', '2', 1, 0, NULL, 1, NULL, 0, NULL, NULL, 'admin', '2019-05-11 17:19:30', 'admin', '2019-05-11 18:00:22', 0, 0, '1', NULL);
 INSERT INTO `sys_permission` VALUES ('3f915b2769fc80648e92d04e84ca059d', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '用户管理', '/system/user', 'system/user/index', 1, NULL, NULL, 1, NULL, NULL, 1, 0, 'ant-design:user', 0, 1, 0, NULL, NULL, NULL, '2018-12-25 20:34:38', 'sunjianlei', '2021-05-08 09:57:31', 0, 0, NULL, 0);
-INSERT INTO `sys_permission` VALUES ('45c966826eeff4c99b8f8ebfe74511fc', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '部门管理', '/system/depart', 'system/depart/index', 1, NULL, NULL, 1, NULL, NULL, 3, 0, 'ant-design:team', 1, 0, 0, NULL, NULL, 'admin', '2019-01-29 18:47:40', 'admin', '2021-09-17 15:58:13', 0, 0, NULL, 0);
-INSERT INTO `sys_permission` VALUES ('5c2f42277948043026b7a14692456828', 'd7d6e2e4e2934f2c9385a623fd98c6f3', '我的部门', '/system/depart-user', 'system/departUser/index', 1, NULL, NULL, 1, NULL, NULL, 4, 0, 'ant-design:home-outlined', 1, 0, 0, NULL, NULL, 'admin', '2019-04-17 15:12:24', 'admin', '2021-09-17 15:58:41', 0, 0, NULL, 0);
+INSERT INTO `sys_permission` VALUES ('45c966826eeff4c99b8f8ebfe74511fc', 'd7d6e2e4e2934f2c9385a623fd98c6f3', 'Department management', '/system/depart', 'system/depart/index', 1, NULL, NULL, 1, NULL, NULL, 3, 0, 'ant-design:team', 1, 0, 0, NULL, NULL, 'admin', '2019-01-29 18:47:40', 'admin', '2021-09-17 15:58:13', 0, 0, NULL, 0);
+INSERT INTO `sys_permission` VALUES ('5c2f42277948043026b7a14692456828', 'd7d6e2e4e2934f2c9385a623fd98c6f3', 'my department', '/system/depart-user', 'system/departUser/index', 1, NULL, NULL, 1, NULL, NULL, 4, 0, 'ant-design:home-outlined', 1, 0, 0, NULL, NULL, 'admin', '2019-04-17 15:12:24', 'admin', '2021-09-17 15:58:41', 0, 0, NULL, 0);
 INSERT INTO `sys_permission` VALUES ('9502685863ab87f0ad1134142788a385', '1438108176273760258', '首页', '/dashboard/analysis', 'dashboard/Analysis', 1, NULL, NULL, 1, NULL, NULL, 1, 0, 'ant-design:bank-filled', 1, 1, 0, NULL, NULL, NULL, '2018-12-25 20:34:38', 'admin', '2021-09-17 15:43:16', 0, 0, NULL, 0);
-INSERT INTO `sys_permission` VALUES ('d7d6e2e4e2934f2c9385a623fd98c6f3', '', '系统管理', '/isystem', 'layouts/RouteView', 1, NULL, NULL, 0, NULL, NULL, 2, 0, 'ant-design:setting', 0, 0, 0, NULL, NULL, NULL, '2018-12-25 20:34:38', 'admin', '2020-01-07 11:00:45', 0, 0, NULL, 0);
+INSERT INTO `sys_permission` VALUES ('d7d6e2e4e2934f2c9385a623fd98c6f3', '', 'System Management', '/isystem', 'layouts/RouteView', 1, NULL, NULL, 0, NULL, NULL, 2, 0, 'ant-design:setting', 0, 0, 0, NULL, NULL, NULL, '2018-12-25 20:34:38', 'admin', '2020-01-07 11:00:45', 0, 0, NULL, 0);
 
 delete from sys_permission where id = '1449995470942593026';
 

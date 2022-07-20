@@ -30,7 +30,7 @@ export const getEnabledTypes = async () => {
       enabledTypes = cloneObject(result);
       return result;
     } else {
-      console.warn('getEnabledType查询失败：');
+      console.warn('getEnabledType Query failed：');
     }
   }
   return {};

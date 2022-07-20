@@ -8,7 +8,7 @@
     <a-col :xl="18" :lg="16" :md="14" :sm="24" style="flex: 1">
       <a-card :bordered="false" style="height: 100%">
         <a-tabs defaultActiveKey="user-info">
-          <a-tab-pane tab="基本信息" key="base-info" forceRender>
+          <a-tab-pane tab="Basic Information" key="base-info" forceRender>
             <DepartBaseInfoTab :data="departData" />
           </a-tab-pane>
           <a-tab-pane tab="用户信息" key="user-info">

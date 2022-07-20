@@ -70,7 +70,7 @@ export const DictSearchInputCell = defineComponent({
               LabelMap.set(item.value, [item]);
             });
           } else {
-            createMessage.warning(message || '查询失败');
+            createMessage.warning(message || 'Query failed');
           }
         })
         .finally(() => {

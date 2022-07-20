@@ -141,11 +141,11 @@ export function useBaseInfoForm(treeData: Ref<any[]>) {
   const descItems: DescItem[] = [
     {
       field: 'departName',
-      label: '机构名称',
+      label: 'institution name',
     },
     {
       field: 'parentId',
-      label: '上级部门',
+      label: 'higher office',
       render(val) {
         if (val) {
           let data = findTree(treeData.value, (item) => item.key == val);

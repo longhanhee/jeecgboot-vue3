@@ -5,7 +5,7 @@ export function useBasicFormSchema() {
   const basicFormSchema: FormSchema[] = [
     {
       field: 'departName',
-      label: '机构名称',
+      label: 'institution name',
       component: 'Input',
       componentProps: {
         placeholder: '请输入机构/部门名称',
@@ -14,7 +14,7 @@ export function useBasicFormSchema() {
     },
     {
       field: 'parentId',
-      label: '上级部门',
+      label: 'higher office',
       component: 'TreeSelect',
       componentProps: {
         treeData: [],
@@ -24,7 +24,7 @@ export function useBasicFormSchema() {
     },
     {
       field: 'orgCode',
-      label: '机构编码',
+      label: 'institution code',
       component: 'Input',
       componentProps: {
         placeholder: '请输入机构编码',
@@ -32,19 +32,19 @@ export function useBasicFormSchema() {
     },
     {
       field: 'orgCategory',
-      label: '机构类型',
+      label: 'organization type',
       component: 'RadioButtonGroup',
       componentProps: { options: [] },
     },
     {
       field: 'departOrder',
-      label: '排序',
+      label: 'Sequence',
       component: 'InputNumber',
       componentProps: {},
     },
     {
       field: 'mobile',
-      label: '电话',
+      label: 'Telephone',
       component: 'Input',
       componentProps: {
         placeholder: '请输入电话',
@@ -52,7 +52,7 @@ export function useBasicFormSchema() {
     },
     {
       field: 'fax',
-      label: '传真',
+      label: 'Fax',
       component: 'Input',
       componentProps: {
         placeholder: '请输入传真',
@@ -60,7 +60,7 @@ export function useBasicFormSchema() {
     },
     {
       field: 'address',
-      label: '地址',
+      label: 'Address',
       component: 'Input',
       componentProps: {
         placeholder: '请输入地址',
@@ -68,7 +68,7 @@ export function useBasicFormSchema() {
     },
     {
       field: 'memo',
-      label: '备注',
+      label: 'Remark',
       component: 'InputTextArea',
       componentProps: {
         placeholder: '请输入备注',

@@ -176,7 +176,7 @@ export default {
     account: '账号管理',
     account_detail: '账号详情',
     password: '修改密码',
-    dept: '部门管理',
+    dept: 'Department management',
     menu: '菜单管理',
     test: '测试功能',
     role: '角色管理',

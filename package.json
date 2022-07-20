@@ -34,9 +34,10 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@jeecg/online": "1.0.1",
     "@iconify/iconify": "^2.0.4",
+    "@jeecg/online": "1.0.1",
     "@vueuse/core": "^6.6.2",
+    "@vueuse/shared": "^8.9.4",
     "@zxcvbn-ts/core": "^1.0.0-beta.0",
     "ant-design-vue": "2.2.8",
     "axios": "^0.23.0",
@@ -70,14 +71,14 @@
     "vue-cropperjs": "^5.0.0",
     "vue-i18n": "^9.1.9",
     "vue-infinite-scroll": "^2.0.2",
+    "vue-json-pretty": "^2.0.4",
     "vue-print-nb-jeecg": "^1.0.10",
     "vue-router": "^4.0.12",
     "vue-types": "^4.1.1",
     "vuedraggable": "^4.1.0",
     "vxe-table": "4.1.0",
     "vxe-table-plugin-antd": "^3.0.3",
-    "xe-utils": "^3.3.1",
-    "vue-json-pretty": "^2.0.4"
+    "xe-utils": "^3.3.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.2.1",
@@ -110,7 +111,7 @@
     "conventional-changelog-cli": "^2.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
-    "eslint": "^8.0.1",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-define-config": "^1.1.1",
     "eslint-plugin-jest": "^25.2.2",

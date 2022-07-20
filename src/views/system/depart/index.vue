@@ -6,12 +6,12 @@
     <a-col :xl="12" :lg="24" :md="24" style="margin-bottom: 10px">
       <div style="height: 100%; background-color: white">
         <a-tabs v-show="departData != null" defaultActiveKey="base-info">
-          <a-tab-pane tab="基本信息" key="base-info" forceRender style="position: relative">
+          <a-tab-pane tab="Basic Information" key="base-info" forceRender style="position: relative">
             <div style="padding: 20px">
               <DepartFormTab :data="departData" :rootTreeData="rootTreeData" @success="onSuccess" />
             </div>
           </a-tab-pane>
-          <a-tab-pane tab="部门权限" key="role-info">
+          <a-tab-pane tab="Department Authority" key="role-info">
             <div style="padding: 0 20px 20px">
               <DepartRuleTab :data="departData" />
             </div>
