@@ -17,4 +17,17 @@ export default {
 
   light: 'Light',
   dark: 'Dark',
+  edit: 'Edit',
+  detail: 'Detail',
+  delete: 'Delete',
+  lock: 'Lock',
+  unlock: 'Unlock',
+  agent: 'Agent',
+  new: 'New',
+  retrieve: 'Retrieve',
+  confirm: 'Confirm',
+  cancel: 'Cancel',
+  export: 'Export',
+  import: 'Import',
+  upload: 'Upload',
 };

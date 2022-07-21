@@ -1,5 +1,5 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" :width="800" title="用户代理" @ok="handleSubmit">
+  <BasicModal v-bind="$attrs" @register="registerModal" :width="800" @title="t('system.user.register')" @ok="handleSubmit">
     <BasicForm @register="registerForm" />
   </BasicModal>
 </template>
@@ -9,34 +9,36 @@
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { formAgentSchema } from './user.data';
   import { getUserAgent, saveOrUpdateAgent } from './user.api';
-  // 声明Emits
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
+  // State Emits
   const emit = defineEmits(['success', 'register']);
-  //表单配置
+  //Form configuration
   const [registerForm, { resetFields, setFieldsValue, validate }] = useForm({
     schemas: formAgentSchema,
     showActionButtonGroup: false,
   });
-  //表单赋值
+  //Form assignment
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
-    //重置表单
+    //Reset form
     await resetFields();
     setModalProps({ confirmLoading: false });
-    //查询获取表单数据
+    //Query obtaining form data
     const res = await getUserAgent({ userName: data.userName });
     data = res.result ? res.result : data;
-    //表单赋值
+    //Form assignment
     await setFieldsValue({ ...data });
   });
-  //表单提交事件
+  //Form submission event
   async function handleSubmit() {
     try {
       const values = await validate();
       setModalProps({ confirmLoading: true });
-      //提交表单
+      //submit Form
       await saveOrUpdateAgent(values);
-      //关闭弹窗
+      //Close the pop -up window
       closeModal();
-      //刷新列表
+      //refresh the list
       emit('success');
     } finally {
       setModalProps({ confirmLoading: false });
