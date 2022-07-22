@@ -51,239 +51,239 @@
 </template>
 
 <script lang="ts" name="system-user" setup>
-//ts语法
-import { ref, computed, unref } from 'vue';
-import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
-import UserDrawer from './UserDrawer.vue';
-import UserRecycleBinModal from './UserRecycleBinModal.vue';
-import PasswordModal from './PasswordModal.vue';
-import UserAgentModal from './UserAgentModal.vue';
-import JThirdAppButton from '/@/components/jeecg/thirdApp/JThirdAppButton.vue';
-import { useDrawer } from '/@/components/Drawer';
-import { useListPage } from '/@/hooks/system/useListPage';
-import { useModal } from '/@/components/Modal';
-import { useMessage } from '/@/hooks/web/useMessage';
-import { columns, searchFormSchema } from './user.data';
-import { list, deleteUser, batchDeleteUser, getImportUrl, getExportUrl, frozenBatch, syncUser } from './user.api';
-// import { usePermission } from '/@/hooks/web/usePermission'
-// const { hasPermission } = usePermission();
-import { useI18n } from '/@/hooks/web/useI18n';
-const { t } = useI18n();
+  //ts语法
+  import { ref, computed, unref } from 'vue';
+  import { BasicTable, TableAction, ActionItem } from '/@/components/Table';
+  import UserDrawer from './UserDrawer.vue';
+  import UserRecycleBinModal from './UserRecycleBinModal.vue';
+  import PasswordModal from './PasswordModal.vue';
+  import UserAgentModal from './UserAgentModal.vue';
+  import JThirdAppButton from '/@/components/jeecg/thirdApp/JThirdAppButton.vue';
+  import { useDrawer } from '/@/components/Drawer';
+  import { useListPage } from '/@/hooks/system/useListPage';
+  import { useModal } from '/@/components/Modal';
+  import { useMessage } from '/@/hooks/web/useMessage';
+  import { columns, searchFormSchema } from './user.data';
+  import { list, deleteUser, batchDeleteUser, getImportUrl, getExportUrl, frozenBatch, syncUser } from './user.api';
+  // import { usePermission } from '/@/hooks/web/usePermission'
+  // const { hasPermission } = usePermission();
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
 
-const { createMessage, createConfirm } = useMessage();
+  const { createMessage, createConfirm } = useMessage();
 
-const selectRows = ref([]);
-//Register DRAWER
-const [registerDrawer, { openDrawer }] = useDrawer();
-//Recycling station MODEL
-const [registerModal, { openModal }] = useModal();
-//Password Model
-const [registerPasswordModal, { openModal: openPasswordModal }] = useModal();
-//Agent Model
-const [registerAgentModal, { openModal: openAgentModal }] = useModal();
+  const selectRows = ref([]);
+  //Register DRAWER
+  const [registerDrawer, { openDrawer }] = useDrawer();
+  //Recycling station MODEL
+  const [registerModal, { openModal }] = useModal();
+  //Password Model
+  const [registerPasswordModal, { openModal: openPasswordModal }] = useModal();
+  //Agent Model
+  const [registerAgentModal, { openModal: openAgentModal }] = useModal();
 
-// List page public parameters and methods
-const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
-  designScope: 'user-list',
-  tableProps: {
-    title: t('system.user.userList'),
-    api: list,
-    columns: columns,
-    size: 'small',
-    formConfig: {
-      labelWidth: 200,
-      schemas: searchFormSchema,
+  // List page public parameters and methods
+  const { prefixCls, tableContext, onExportXls, onImportXls } = useListPage({
+    designScope: 'user-list',
+    tableProps: {
+      title: t('system.user.userList'),
+      api: list,
+      columns: columns,
+      size: 'small',
+      formConfig: {
+        labelWidth: 200,
+        schemas: searchFormSchema,
+      },
+      actionColumn: {
+        width: 120,
+      },
+      beforeFetch: (params) => {
+        return Object.assign({ column: 'createTime', order: 'desc' }, params);
+      },
     },
-    actionColumn: {
-      width: 120,
+    exportConfig: {
+      name: t('system.user.userList'),
+      url: getExportUrl,
     },
-    beforeFetch: (params) => {
-      return Object.assign({ column: 'createTime', order: 'desc' }, params);
-    },
-  },
-  exportConfig: {
-    name: t('system.user.userList'),
-    url: getExportUrl,
-  },
-  importConfig: {
-    url: getImportUrl,
-  },
-});
-
-//Register Table data
-const [registerTable, { reload, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
-
-/**
- * New incident
- */
-function handleCreate() {
-  openDrawer(true, {
-    isUpdate: false,
-    showFooter: true,
-  });
-}
-/**
- * Editor
- */
-async function handleEdit(record: Recordable) {
-  openDrawer(true, {
-    record,
-    isUpdate: true,
-    showFooter: true,
-  });
-}
-/**
- * Detail
- */
-async function handleDetail(record: Recordable) {
-  openDrawer(true, {
-    record,
-    isUpdate: true,
-    showFooter: false,
-  });
-}
-/**
- * Delete incident
- */
-async function handleDelete(record) {
-  if ('admin' == record.username) {
-    createMessage.warning(t('system.user.warning.adminWarning'));
-    return;
-  }
-  await deleteUser({ id: record.id }, reload);
-}
-/**
- * Batch deletion event
- */
-async function batchHandleDelete() {
-  let hasAdmin = unref(selectRows).filter((item) => item.username == 'admin');
-  if (unref(hasAdmin).length > 0) {
-    createMessage.warning(t('system.user.warning.adminWarning'));
-    return;
-  }
-  await batchDeleteUser({ ids: selectedRowKeys.value }, () => {
-    selectedRowKeys.value = [];
-    reload();
-  });
-}
-/**
- * Successfully call back
- */
-function handleSuccess() {
-  reload();
-}
-
-/**
- * Open the modification password pop -up window
- */
-function handleChangePassword(username) {
-  openPasswordModal(true, { username });
-}
-/**
- * Open the agent pop -up window
- */
-function handleAgentSettings(userName) {
-  openAgentModal(true, { userName });
-}
-/**
- * Frozen
- */
-async function handleFrozen(record, status) {
-  if ('admin' == record.username) {
-    createMessage.warning(t('system.user.warning.adminWarning'));
-    return;
-  }
-  await frozenBatch({ ids: record.id, status: status }, reload);
-}
-/**
- * Batch frozen
- */
-function batchFrozen(status) {
-  let hasAdmin = unref(selectRows).filter((item) => item.username == 'admin');
-  if (unref(hasAdmin).length > 0) {
-    createMessage.warning(t('system.user.warning.adminWarning'));
-    return;
-  }
-  createConfirm({
-    iconType: 'warning',
-    title: t('system.user.confirm'),
-    content: t('system.user.to') + (status == 1 ? t('system.user.unlock') : t('system.user.lock')) + t('system.user.thisAccount'),
-    onOk: async () => {
-      await frozenBatch({ ids: unref(selectedRowKeys).join(','), status: status }, reload);
+    importConfig: {
+      url: getImportUrl,
     },
   });
-}
 
-/**
- *Synchronous process
- */
-function handleSyncUser() {
-  syncUser();
-}
-/**
- *Synchronous nails and WeChat callback
- */
-function onSyncFinally({ isToLocal }) {
-  // Refresh the data when synchronized to local
-  if (isToLocal) {
+  //Register Table data
+  const [registerTable, { reload, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
+
+  /**
+   * New incident
+   */
+  function handleCreate() {
+    openDrawer(true, {
+      isUpdate: false,
+      showFooter: true,
+    });
+  }
+  /**
+   * Editor
+   */
+  async function handleEdit(record: Recordable) {
+    openDrawer(true, {
+      record,
+      isUpdate: true,
+      showFooter: true,
+    });
+  }
+  /**
+   * Detail
+   */
+  async function handleDetail(record: Recordable) {
+    openDrawer(true, {
+      record,
+      isUpdate: true,
+      showFooter: false,
+    });
+  }
+  /**
+   * Delete incident
+   */
+  async function handleDelete(record) {
+    if ('admin' == record.username) {
+      createMessage.warning(t('system.user.warning.adminWarning'));
+      return;
+    }
+    await deleteUser({ id: record.id }, reload);
+  }
+  /**
+   * Batch deletion event
+   */
+  async function batchHandleDelete() {
+    let hasAdmin = unref(selectRows).filter((item) => item.username == 'admin');
+    if (unref(hasAdmin).length > 0) {
+      createMessage.warning(t('system.user.warning.adminWarning'));
+      return;
+    }
+    await batchDeleteUser({ ids: selectedRowKeys.value }, () => {
+      selectedRowKeys.value = [];
+      reload();
+    });
+  }
+  /**
+   * Successfully call back
+   */
+  function handleSuccess() {
     reload();
   }
-}
 
-/**
- * Operating bar
- */
-function getTableAction(record): ActionItem[] {
-  return [
-    {
-      label: t('common.edit'),
-      onClick: handleEdit.bind(null, record),
-      // ifShow: () => hasPermission('user:edit'),
-    },
-  ];
-}
-/**
- * Drop -down operation bar
- */
-function getDropDownAction(record): ActionItem[] {
-  return [
-    {
-      label: t('common.detail'),
-      onClick: handleDetail.bind(null, record),
-    },
-    {
-      label: t('system.user.password'),
-      onClick: handleChangePassword.bind(null, record.username),
-    },
-    {
-      label: t('common.delete'),
-      popConfirm: {
-        title: t('system.user.warning.deleteWarning'),
-        confirm: handleDelete.bind(null, record),
+  /**
+   * Open the modification password pop -up window
+   */
+  function handleChangePassword(username) {
+    openPasswordModal(true, { username });
+  }
+  /**
+   * Open the agent pop -up window
+   */
+  function handleAgentSettings(userName) {
+    openAgentModal(true, { userName });
+  }
+  /**
+   * Frozen
+   */
+  async function handleFrozen(record, status) {
+    if ('admin' == record.username) {
+      createMessage.warning(t('system.user.warning.adminWarning'));
+      return;
+    }
+    await frozenBatch({ ids: record.id, status: status }, reload);
+  }
+  /**
+   * Batch frozen
+   */
+  function batchFrozen(status) {
+    let hasAdmin = unref(selectRows).filter((item) => item.username == 'admin');
+    if (unref(hasAdmin).length > 0) {
+      createMessage.warning(t('system.user.warning.adminWarning'));
+      return;
+    }
+    createConfirm({
+      iconType: 'warning',
+      title: t('system.user.confirm'),
+      content: t('system.user.to') + (status == 1 ? t('system.user.unlock') : t('system.user.lock')) + t('system.user.thisAccount'),
+      onOk: async () => {
+        await frozenBatch({ ids: unref(selectedRowKeys).join(','), status: status }, reload);
       },
-    },
-    {
-      label: t('common.lock'),
-      ifShow: record.status == 1,
-      popConfirm: {
-        title: t('system.user.warning.lockWarning'),
-        confirm: handleFrozen.bind(null, record, 2),
+    });
+  }
+
+  /**
+   *Synchronous process
+   */
+  function handleSyncUser() {
+    syncUser();
+  }
+  /**
+   *Synchronous nails and WeChat callback
+   */
+  function onSyncFinally({ isToLocal }) {
+    // Refresh the data when synchronized to local
+    if (isToLocal) {
+      reload();
+    }
+  }
+
+  /**
+   * Operating bar
+   */
+  function getTableAction(record): ActionItem[] {
+    return [
+      {
+        label: t('common.edit'),
+        onClick: handleEdit.bind(null, record),
+        // ifShow: () => hasPermission('user:edit'),
       },
-    },
-    {
-      label: t('common.unlock'),
-      ifShow: record.status == 2,
-      popConfirm: {
-        title: t('system.user.warning.unlockWarning'),
-        confirm: handleFrozen.bind(null, record, 1),
+    ];
+  }
+  /**
+   * Drop -down operation bar
+   */
+  function getDropDownAction(record): ActionItem[] {
+    return [
+      {
+        label: t('common.detail'),
+        onClick: handleDetail.bind(null, record),
       },
-    },
-    {
-      label: t('common.agent'),
-      onClick: handleAgentSettings.bind(null, record.username),
-    },
-  ];
-}
+      {
+        label: t('system.user.password'),
+        onClick: handleChangePassword.bind(null, record.username),
+      },
+      {
+        label: t('common.delete'),
+        popConfirm: {
+          title: t('system.user.warning.deleteWarning'),
+          confirm: handleDelete.bind(null, record),
+        },
+      },
+      {
+        label: t('common.lock'),
+        ifShow: record.status == 1,
+        popConfirm: {
+          title: t('system.user.warning.lockWarning'),
+          confirm: handleFrozen.bind(null, record, 2),
+        },
+      },
+      {
+        label: t('common.unlock'),
+        ifShow: record.status == 2,
+        popConfirm: {
+          title: t('system.user.warning.unlockWarning'),
+          confirm: handleFrozen.bind(null, record, 1),
+        },
+      },
+      {
+        label: t('common.agent'),
+        onClick: handleAgentSettings.bind(null, record.username),
+      },
+    ];
+  }
 </script>
 
 <style scoped></style>

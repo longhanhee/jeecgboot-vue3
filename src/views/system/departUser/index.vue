@@ -8,13 +8,13 @@
     <a-col :xl="18" :lg="16" :md="14" :sm="24" style="flex: 1">
       <a-card :bordered="false" style="height: 100%">
         <a-tabs defaultActiveKey="user-info">
-          <a-tab-pane tab="Basic Information" key="base-info" forceRender>
+          <a-tab-pane :tab="t('common.basicInfo')" key="base-info" forceRender>
             <DepartBaseInfoTab :data="departData" />
           </a-tab-pane>
-          <a-tab-pane tab="用户信息" key="user-info">
+          <a-tab-pane :tab="t('common.userInfo')" key="user-info">
             <DepartUserInfoTab :data="departData" />
           </a-tab-pane>
-          <a-tab-pane tab="部门角色" key="role-info">
+          <a-tab-pane :tab="t('comon.roleInfo')" key="role-info">
             <DepartRoleInfoTab :data="departData" />
           </a-tab-pane>
         </a-tabs>
@@ -31,14 +31,15 @@
   import DepartBaseInfoTab from './components/DepartBaseInfoTab.vue';
   import DepartUserInfoTab from './components/DepartUserInfoTab.vue';
   import DepartRoleInfoTab from './components/DepartRoleInfoTab.vue';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const { prefixCls } = useDesign('depart-user');
   provide('prefixCls', prefixCls);
 
-  // 当前选中的部门信息
+  // The current department information selected
   let departData = ref({});
 
-  // 左侧树选择后触发
+  // Triggered after choosing the left tree
   function onTreeSelect(data) {
     departData.value = data;
   }

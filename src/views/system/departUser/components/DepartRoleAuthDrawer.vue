@@ -1,10 +1,19 @@
 <template>
-  <BasicDrawer title="部门角色权限配置" :width="650" :loading="loading" showFooter okText="保存并关闭" @ok="onSubmit(true)" @close="onClose" @register="registerDrawer">
+  <BasicDrawer
+    :title="t('system.depart.departmentRoleConfig')"
+    :width="650"
+    :loading="loading"
+    showFooter
+    :okText="t('common.saveAndClose')"
+    @ok="onSubmit(true)"
+    @close="onClose"
+    @register="registerDrawer"
+  >
     <div>
       <a-spin :spinning="loading">
         <template v-if="treeData.length > 0">
           <BasicTree
-            title="所拥有的部门权限"
+            :title="t('system.depart.ownedDepartment')"
             toolbar
             checkable
             :treeData="treeData"
@@ -23,12 +32,12 @@
             </template>
           </BasicTree>
         </template>
-        <a-empty v-else description="无可配置部门权限" />
+        <a-empty v-else :description="t('system.depart.warning.unableConfig')" />
       </a-spin>
     </div>
 
     <template #centerFooter>
-      <a-button type="primary" :loading="loading" ghost @click="onSubmit(false)">仅保存</a-button>
+      <a-button type="primary" :loading="loading" ghost @click="onSubmit(false)">{{ t('common.save') }}</a-button>
     </template>
   </BasicDrawer>
   <DepartRoleDataRuleDrawer @register="registerDataRuleDrawer" />
@@ -43,6 +52,8 @@
 
   import DepartRoleDataRuleDrawer from './DepartRoleDataRuleDrawer.vue';
   import { queryTreeListForDeptRole, queryDeptRolePermission, saveDeptRolePermission } from '../depart.user.api';
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
 
   defineEmits(['register']);
   const { createMessage } = useMessage();
@@ -57,25 +68,25 @@
   const allTreeKeys = ref<Array<any>>([]);
   const checkStrictly = ref(true);
 
-  // 注册抽屉组件
+  // Register drawer component
   const [registerDrawer, { closeDrawer }] = useDrawerInner((data) => {
     roleId.value = data.record.id;
     departId.value = data.record.departId;
     loadData();
   });
-  // 注册数据规则授权弹窗抽屉
+  // Registration data rule authorized pop -up drawer
   const [registerDataRuleDrawer, dataRuleDrawer] = useDrawer();
 
   async function loadData() {
     try {
       loading.value = true;
-      // 用户角色授权功能，查询菜单权限树
+      // User role authorization function, query menu permission tree
       const { ids, treeList } = await queryTreeListForDeptRole({ departId: departId.value });
       if (ids.length > 0) {
         allTreeKeys.value = ids;
         expandedKeys.value = ids;
         treeData.value = treeList;
-        // 查询角色授权
+        // Query role authorization
         checkedKeys.value = await queryDeptRolePermission({ roleId: roleId.value });
         lastCheckedKeys.value = [checkedKeys.value];
       } else {
@@ -86,7 +97,7 @@
     }
   }
 
-  // 重置页面
+  // Reset page
   function reset() {
     treeData.value = [];
     expandedKeys.value = [];
@@ -95,7 +106,7 @@
     loading.value = false;
   }
 
-  // tree勾选复选框事件
+  // Tree check the check box event
   function onCheck(event) {
     if (checkStrictly.value) {
       checkedKeys.value = event.checked;
@@ -104,12 +115,12 @@
     }
   }
 
-  // tree展开事件
+  // Tree unfolding event
   function onExpand($expandedKeys) {
     expandedKeys.value = $expandedKeys;
   }
 
-  // tree选中事件
+  // TREE selection event
   function onSelect($selectedKeys, { selectedNodes }) {
     if (selectedNodes[0]?.props?.ruleFlag) {
       let functionId = $selectedKeys[0];

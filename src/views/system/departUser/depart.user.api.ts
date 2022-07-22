@@ -1,7 +1,8 @@
 import { unref } from 'vue';
 import { defHttp } from '/@/utils/http/axios';
 import { useMessage } from '/@/hooks/web/useMessage';
-
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
 const { createConfirm } = useMessage();
 
 enum Api {
@@ -10,14 +11,14 @@ enum Api {
   searchBy = '/sys/sysDepart/searchBy',
 }
 
-// 部门用户API
+// Department user API
 enum DepartUserApi {
   list = '/sys/user/departUserList',
   link = '/sys/user/editSysDepartWithUser',
   unlink = '/sys/user/deleteUserInDepartBatch',
 }
 
-// 部门角色API
+// Department role API
 enum DepartRoleApi {
   list = '/sys/sysDepartRole/list',
   deleteBatch = '/sys/sysDepartRole/deleteBatch',
@@ -33,35 +34,35 @@ enum DepartRoleApi {
 }
 
 /**
- * 获取部门树列表
+ * List of Tree Tree
  */
 export const queryMyDepartTreeList = (params?) => defHttp.get({ url: Api.treeList, params }, { isTransformResponse: false });
 
 /**
- * 查询数据，以树结构形式加载所有部门的名称
+ * Query data, load the name of all departments in the form of tree structure
  */
 export const queryIdTree = (params?) => defHttp.get({ url: Api.queryIdTree, params });
 
 /**
- * 根据关键字搜索部门
+ * Search department according to keywords
  */
 export const searchByKeywords = (params) => defHttp.get({ url: Api.searchBy, params });
 
 /**
- * 查询部门下的用户信息
+ * Query user information under the department
  */
 export const departUserList = (params) => defHttp.get({ url: DepartUserApi.list, params });
 
 /**
- * 批量添加部门和用户的关联关系
+ * Related relationships between departments and users in batches
  *
- * @param departId 部门ID
- * @param userIdList 用户ID列表
+ * @param departId Department ID
+ * @param userIdList User ID list
  */
 export const linkDepartUserBatch = (departId: string, userIdList: string[]) => defHttp.post({ url: DepartUserApi.link, params: { depId: departId, userIdList } });
 
 /**
- * 批量取消部门和用户的关联关系
+ * Cancellation of the relationship between departments and users
  */
 export const unlinkDepartUserBatch = (params, confirm = false) => {
   return new Promise((resolve, reject) => {
@@ -71,8 +72,8 @@ export const unlinkDepartUserBatch = (params, confirm = false) => {
     if (confirm) {
       createConfirm({
         iconType: 'warning',
-        title: '取消关联',
-        content: '确定要取消关联吗？',
+        title: t('common.unlink'),
+        content: t('system.depart.warning.unlinkWarning'),
         onOk: () => doDelete(),
         onCancel: () => reject(),
       });
@@ -83,12 +84,12 @@ export const unlinkDepartUserBatch = (params, confirm = false) => {
 };
 
 /**
- * 查询部门角色信息
+ * Query department role information
  */
 export const departRoleList = (params) => defHttp.get({ url: DepartRoleApi.list, params });
 
 /**
- * 保存或者更新部门角色
+ * Save or update the role of the department
  */
 export const saveOrUpdateDepartRole = (params, isUpdate) => {
   if (isUpdate) {
@@ -99,7 +100,7 @@ export const saveOrUpdateDepartRole = (params, isUpdate) => {
 };
 
 /**
- * 批量删除部门角色
+ * Batch delete department role
  */
 export const deleteBatchDepartRole = (params, confirm = false) => {
   return new Promise((resolve, reject) => {
@@ -109,8 +110,8 @@ export const deleteBatchDepartRole = (params, confirm = false) => {
     if (confirm) {
       createConfirm({
         iconType: 'warning',
-        title: '删除',
-        content: '确定要删除吗？',
+        title: t('common.delete'),
+        content: t('common.message.deleteWarning'),
         onOk: () => doDelete(),
         onCancel: () => reject(),
       });
@@ -121,38 +122,38 @@ export const deleteBatchDepartRole = (params, confirm = false) => {
 };
 
 /**
- * 用户角色授权功能，查询菜单权限树
+ * User role authorization function, query menu permission tree
  */
 export const queryTreeListForDeptRole = (params) => defHttp.get({ url: DepartRoleApi.queryTreeListForDeptRole, params });
 /**
- * 查询角色授权
+ * Query role authorization
  */
 export const queryDeptRolePermission = (params) => defHttp.get({ url: DepartRoleApi.queryDeptRolePermission, params });
 /**
- * 保存角色授权
+ * Save role authorization
  */
 export const saveDeptRolePermission = (params) => defHttp.post({ url: DepartRoleApi.saveDeptRolePermission, params });
 
 /**
- *  查询部门角色数据权限列表
+ *  Query department role data permissions list
  */
 export const queryDepartRoleDataRule = (functionId, departId, roleId, params?) => {
   let url = `${DepartRoleApi.dataRule}/${unref(functionId)}/${unref(departId)}/${unref(roleId)}`;
   return defHttp.get({ url, params });
 };
 /**
- * 保存部门角色数据权限
+ * Preserving department role data permissions
  */
 export const saveDepartRoleDataRule = (params) => defHttp.post({ url: DepartRoleApi.dataRule, params });
 /**
- * 查询部门角色用户授权
+ * Query departmental user authorization
  */
 export const queryDepartRoleUserList = (params) => defHttp.get({ url: DepartRoleApi.getDeptRoleList, params });
 /**
- * 根据 userId 查询部门角色用户授权
+ * Observed according to the userd query department's role user authorization
  */
 export const queryDepartRoleByUserId = (params) => defHttp.get({ url: DepartRoleApi.getDeptRoleByUserId, params });
 /**
- * 保存部门角色用户授权
+ * Save the department's role user authorization
  */
 export const saveDepartRoleUser = (params) => defHttp.post({ url: DepartRoleApi.saveDeptRoleUser, params });
