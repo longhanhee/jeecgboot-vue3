@@ -1,90 +1,92 @@
 import { FormSchema } from '/@/components/Form';
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
 
-// 部门基础表单
+// Department Basic Form
 export function useBasicFormSchema() {
   const basicFormSchema: FormSchema[] = [
     {
       field: 'departName',
-      label: 'institution name',
+      label: t('system.depart.departmentName'),
       component: 'Input',
       componentProps: {
-        placeholder: '请输入机构/部门名称',
+        placeholder: t('system.depart.departmentNamePlaceholder'),
       },
-      rules: [{ required: true, message: '机构名称不能为空' }],
+      rules: [{ required: true, message: t('system.depart.warning.departmentWarning') }],
     },
     {
       field: 'parentId',
-      label: 'higher office',
+      label: t('system.depart.higherOffice'),
       component: 'TreeSelect',
       componentProps: {
         treeData: [],
-        placeholder: '无',
+        placeholder: '',
         dropdownStyle: { maxHeight: '200px', overflow: 'auto' },
       },
     },
     {
       field: 'orgCode',
-      label: 'institution code',
+      label: t('system.depart.organizeCode'),
       component: 'Input',
       componentProps: {
-        placeholder: '请输入机构编码',
+        placeholder: t('system.depart.organizeCodePlaceholder'),
       },
     },
     {
       field: 'orgCategory',
-      label: 'organization type',
+      label: t('system.depart.organizationType'),
       component: 'RadioButtonGroup',
       componentProps: { options: [] },
     },
     {
       field: 'departOrder',
-      label: 'Sequence',
+      label: t('system.depart.sequence'),
       component: 'InputNumber',
       componentProps: {},
     },
     {
       field: 'mobile',
-      label: 'Telephone',
+      label: t('system.depart.phonenumber'),
       component: 'Input',
       componentProps: {
-        placeholder: '请输入电话',
+        placeholder: t('system.depart.phonenumberPlaceholder'),
       },
     },
     {
       field: 'fax',
-      label: 'Fax',
+      label: t('system.depart.fax'),
       component: 'Input',
       componentProps: {
-        placeholder: '请输入传真',
+        placeholder: t('system.depart.faxPlaceholder'),
       },
     },
     {
       field: 'address',
-      label: 'Address',
+      label: t('system.depart.address'),
       component: 'Input',
       componentProps: {
-        placeholder: '请输入地址',
+        placeholder: t('system.depart.addressPlaceholder'),
       },
     },
     {
       field: 'memo',
-      label: 'Remark',
+      label: t('system.depart.memo'),
       component: 'InputTextArea',
       componentProps: {
-        placeholder: '请输入备注',
+        placeholder: t('system.depart.memoPlaceholder'),
       },
     },
   ];
   return { basicFormSchema };
 }
 
-// 机构类型选项
+// Institutional options
 export const orgCategoryOptions = {
-  // 一级部门
-  root: [{ value: '1', label: '公司' }],
-  // 子级部门
+  // First-level department
+  root: [{ value: '1', label: t('common.company') }],
+  // Sub-sector
   child: [
-    { value: '2', label: '部门' },
-    { value: '3', label: '岗位' },
+    { value: '2', label: t('common.department') },
+    { value: '3', label: t('common.post') },
   ],
 };

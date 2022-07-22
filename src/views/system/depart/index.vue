@@ -18,7 +18,7 @@
           </a-tab-pane>
         </a-tabs>
         <div v-show="departData == null" style="padding-top: 40px">
-          <a-empty description="尚未选择部门" />
+          <a-empty description="{{t('system.depart.noSelectionDepartment')}}" />
         </div>
       </div>
     </a-col>
@@ -26,37 +26,38 @@
 </template>
 
 <script lang="ts" setup name="system-depart">
-  import { provide, ref } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import DepartLeftTree from './components/DepartLeftTree.vue';
-  import DepartFormTab from './components/DepartFormTab.vue';
-  import DepartRuleTab from './components/DepartRuleTab.vue';
+import { provide, ref } from 'vue';
+import { useDesign } from '/@/hooks/web/useDesign';
+import DepartLeftTree from './components/DepartLeftTree.vue';
+import DepartFormTab from './components/DepartFormTab.vue';
+import DepartRuleTab from './components/DepartRuleTab.vue';
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
+const { prefixCls } = useDesign('depart-manage');
+provide('prefixCls', prefixCls);
 
-  const { prefixCls } = useDesign('depart-manage');
-  provide('prefixCls', prefixCls);
+// Define a Ref variable to the sub -component
+const leftTree = ref();
 
-  // 给子组件定义一个ref变量
-  const leftTree = ref();
+// The current department information selected
+const departData = ref({});
+const rootTreeData = ref<any[]>([]);
 
-  // 当前选中的部门信息
-  const departData = ref({});
-  const rootTreeData = ref<any[]>([]);
+// Triggered after choosing the left tree
+function onTreeSelect(data) {
+  departData.value = data;
+}
 
-  // 左侧树选择后触发
-  function onTreeSelect(data) {
-    departData.value = data;
-  }
+// Roottreedata trigger
+function onRootTreeData(data) {
+  rootTreeData.value = data;
+}
 
-  // 左侧树rootTreeData触发
-  function onRootTreeData(data) {
-    rootTreeData.value = data;
-  }
-
-  function onSuccess() {
-    leftTree.value.loadRootTreeData();
-  }
+function onSuccess() {
+  leftTree.value.loadRootTreeData();
+}
 </script>
 
 <style lang="less">
-  @import './index.less';
+@import './index.less';
 </style>

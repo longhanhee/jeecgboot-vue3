@@ -231,19 +231,19 @@ function onSyncFinally({ isToLocal }) {
 }
 
 /**
- * 操作栏
+ * Operating bar
  */
 function getTableAction(record): ActionItem[] {
   return [
     {
-      label: t('system.user.edit'),
+      label: t('common.edit'),
       onClick: handleEdit.bind(null, record),
       // ifShow: () => hasPermission('user:edit'),
     },
   ];
 }
 /**
- * 下拉操作栏
+ * Drop -down operation bar
  */
 function getDropDownAction(record): ActionItem[] {
   return [

@@ -21,25 +21,25 @@
         </template>
       </BasicTree>
     </template>
-    <a-empty v-else description="无可配置部门权限" />
+    <a-empty v-else description="{{t('system.depart.warning.unableConfig')}}" />
 
     <div class="j-box-bottom-button offset-20" style="margin-top: 30px">
       <div class="j-box-bottom-button-float">
         <a-dropdown :trigger="['click']" placement="topCenter">
           <template #overlay>
             <a-menu>
-              <a-menu-item key="3" @click="toggleCheckALL(true)">全部勾选</a-menu-item>
-              <a-menu-item key="4" @click="toggleCheckALL(false)">取消全选</a-menu-item>
-              <a-menu-item key="5" @click="toggleExpandAll(true)">展开所有</a-menu-item>
-              <a-menu-item key="6" @click="toggleExpandAll(false)">收起所有</a-menu-item>
+              <a-menu-item key="3" @click="toggleCheckALL(true)">{{ t('common.all') }}</a-menu-item>
+              <a-menu-item key="4" @click="toggleCheckALL(false)">{{ t('common.cancel') }}</a-menu-item>
+              <a-menu-item key="5" @click="toggleExpandAll(true)">{{ t('common.expandAll') }}</a-menu-item>
+              <a-menu-item key="6" @click="toggleExpandAll(false)">{{ t('common.collapseAll') }}</a-menu-item>
             </a-menu>
           </template>
           <a-button style="float: left">
-            树操作
+            {{ t('system.depart.treeOperation') }}
             <Icon icon="ant-design:up-outlined" />
           </a-button>
         </a-dropdown>
-        <a-button type="primary" preIcon="ant-design:save-filled" @click="onSubmit">保存</a-button>
+        <a-button type="primary" preIcon="ant-design:save-filled" @click="onSubmit">{{ t('common.keep') }}</a-button>
       </div>
     </div>
   </a-spin>
@@ -47,123 +47,124 @@
 </template>
 
 <script lang="ts" setup>
-  import { watch, computed, inject, ref, nextTick } from 'vue';
-  import { useDrawer } from '/@/components/Drawer';
-  import { BasicTree } from '/@/components/Tree/index';
-  import DepartDataRuleDrawer from './DepartDataRuleDrawer.vue';
-  import { queryRoleTreeList, queryDepartPermission, saveDepartPermission } from '../depart.api';
+import { watch, computed, inject, ref, nextTick } from 'vue';
+import { useDrawer } from '/@/components/Drawer';
+import { BasicTree } from '/@/components/Tree/index';
+import DepartDataRuleDrawer from './DepartDataRuleDrawer.vue';
+import { queryRoleTreeList, queryDepartPermission, saveDepartPermission } from '../depart.api';
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
+const props = defineProps({
+  data: { type: Object, default: () => ({}) },
+});
+// The currently selected department ID may be empty, which means that there is no selection of the department
+const departId = computed(() => props.data?.id);
 
-  const props = defineProps({
-    data: { type: Object, default: () => ({}) },
-  });
-  // 当前选中的部门ID，可能会为空，代表未选择部门
-  const departId = computed(() => props.data?.id);
+const prefixCls = inject('prefixCls');
+const basicTree = ref();
+const loading = ref<boolean>(false);
+const treeData = ref<any[]>([]);
+const expandedKeys = ref<Array<any>>([]);
+const selectedKeys = ref<Array<any>>([]);
+const checkedKeys = ref<Array<any>>([]);
+const lastCheckedKeys = ref<Array<any>>([]);
+const checkStrictly = ref(true);
 
-  const prefixCls = inject('prefixCls');
-  const basicTree = ref();
-  const loading = ref<boolean>(false);
-  const treeData = ref<any[]>([]);
-  const expandedKeys = ref<Array<any>>([]);
-  const selectedKeys = ref<Array<any>>([]);
-  const checkedKeys = ref<Array<any>>([]);
-  const lastCheckedKeys = ref<Array<any>>([]);
-  const checkStrictly = ref(true);
+// Registration data rule authorized pop -up drawer
+const [registerDataRuleDrawer, dataRuleDrawer] = useDrawer();
 
-  // 注册数据规则授权弹窗抽屉
-  const [registerDataRuleDrawer, dataRuleDrawer] = useDrawer();
+// onCreated
+loadData();
+watch(departId, () => loadDepartPermission(), { immediate: true });
 
-  // onCreated
-  loadData();
-  watch(departId, () => loadDepartPermission(), { immediate: true });
+async function loadData() {
+  try {
+    loading.value = true;
+    let { treeList } = await queryRoleTreeList();
+    treeData.value = treeList;
+    await nextTick();
+    toggleExpandAll(true);
+  } finally {
+    loading.value = false;
+  }
+}
 
-  async function loadData() {
+async function loadDepartPermission() {
+  if (departId.value) {
     try {
       loading.value = true;
-      let { treeList } = await queryRoleTreeList();
-      treeData.value = treeList;
-      await nextTick();
-      toggleExpandAll(true);
+      let keys = await queryDepartPermission({ departId: departId.value });
+      checkedKeys.value = keys;
+      lastCheckedKeys.value = [...keys];
     } finally {
       loading.value = false;
     }
   }
+}
 
-  async function loadDepartPermission() {
-    if (departId.value) {
-      try {
-        loading.value = true;
-        let keys = await queryDepartPermission({ departId: departId.value });
-        checkedKeys.value = keys;
-        lastCheckedKeys.value = [...keys];
-      } finally {
-        loading.value = false;
-      }
-    }
+async function onSubmit() {
+  try {
+    loading.value = true;
+    await saveDepartPermission({
+      departId: departId.value,
+      permissionIds: checkedKeys.value.join(','),
+      lastpermissionIds: lastCheckedKeys.value.join(','),
+    });
+    await loadData();
+    await loadDepartPermission();
+  } finally {
+    loading.value = false;
   }
+}
 
-  async function onSubmit() {
-    try {
-      loading.value = true;
-      await saveDepartPermission({
-        departId: departId.value,
-        permissionIds: checkedKeys.value.join(','),
-        lastpermissionIds: lastCheckedKeys.value.join(','),
-      });
-      await loadData();
-      await loadDepartPermission();
-    } finally {
-      loading.value = false;
-    }
+// Tree check the check box event
+function onCheck(event) {
+  if (!Array.isArray(event)) {
+    checkedKeys.value = event.checked;
+  } else {
+    checkedKeys.value = event;
   }
+}
 
-  // tree勾选复选框事件
-  function onCheck(event) {
-    if (!Array.isArray(event)) {
-      checkedKeys.value = event.checked;
-    } else {
-      checkedKeys.value = event;
-    }
-  }
+// Tree unfolding event
+function onExpand($expandedKeys) {
+  expandedKeys.value = $expandedKeys;
+}
 
-  // tree展开事件
-  function onExpand($expandedKeys) {
-    expandedKeys.value = $expandedKeys;
+// TREE selection event
+function onSelect($selectedKeys, { selectedNodes }) {
+  if (selectedNodes[0]?.props?.ruleFlag) {
+    let functionId = $selectedKeys[0];
+    dataRuleDrawer.openDrawer(true, { departId, functionId });
   }
+  selectedKeys.value = [];
+}
 
-  // tree选中事件
-  function onSelect($selectedKeys, { selectedNodes }) {
-    if (selectedNodes[0]?.props?.ruleFlag) {
-      let functionId = $selectedKeys[0];
-      dataRuleDrawer.openDrawer(true, { departId, functionId });
-    }
-    selectedKeys.value = [];
-  }
+// Switch the father -son relationship
+async function toggleCheckStrictly(flag) {
+  checkStrictly.value = flag;
+  await nextTick();
+  checkedKeys.value = basicTree.value.getCheckedKeys();
+}
 
-  // 切换父子关联
-  async function toggleCheckStrictly(flag) {
-    checkStrictly.value = flag;
-    await nextTick();
-    checkedKeys.value = basicTree.value.getCheckedKeys();
-  }
+// Switch to put away
+async function toggleExpandAll(flag) {
+  basicTree.value.expandAll(flag);
+  await nextTick();
+  expandedKeys.value = basicTree.value.getExpandedKeys();
+}
 
-  // 切换展开收起
-  async function toggleExpandAll(flag) {
-    basicTree.value.expandAll(flag);
-    await nextTick();
-    expandedKeys.value = basicTree.value.getExpandedKeys();
-  }
-
-  // 切换全选
-  async function toggleCheckALL(flag) {
-    basicTree.value.checkAll(flag);
-    await nextTick();
-    checkedKeys.value = basicTree.value.getCheckedKeys();
-  }
+// Switch all the selection
+async function toggleCheckALL(flag) {
+  basicTree.value.checkAll(flag);
+  await nextTick();
+  checkedKeys.value = basicTree.value.getCheckedKeys();
+}
 </script>
 
 <style lang="less" scoped>
-  // 【VUEN-188】解决滚动条不灵敏的问题
-  .depart-rule-tree ::v-deep(.scrollbar__bar) {
-    pointer-events: none;
-  }
+// 【VUEN-188] The problem of not sensitive to the scroll bar
+.depart-rule-tree ::v-deep(.scrollbar__bar) {
+  pointer-events: none;
+}
 </style>
