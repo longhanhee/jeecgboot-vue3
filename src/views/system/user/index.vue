@@ -4,32 +4,32 @@
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
       <!--插槽:table标题-->
       <template #tableTitle>
-        <a-button type="primary" preIcon="ant-design:plus-outlined" v-auth="'user:add'" @click="handleCreate">{t('common.new')}</a-button>
-        <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">{t('common.export')}</a-button>
-        <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">{t('common.import')}</j-upload-button>
-        <a-button type="primary" @click="handleSyncUser" preIcon="ant-design:sync-outlined">{t('system.user.synchronizationProcess')}</a-button>
-        <a-button type="primary" @click="openModal(true, {})" preIcon="ant-design:hdd-outlined">{t('system.user.recycleBin')}</a-button>
+        <a-button type="primary" preIcon="ant-design:plus-outlined" v-auth="'user:add'" @click="handleCreate">{{ t('common.new') }}</a-button>
+        <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">{{ t('common.export') }}</a-button>
+        <j-upload-button type="primary" preIcon="ant-design:import-outlined" @click="onImportXls">{{ t('common.import') }}</j-upload-button>
+        <a-button type="primary" @click="handleSyncUser" preIcon="ant-design:sync-outlined">{{ t('system.user.synchronizationProcess') }}</a-button>
+        <a-button type="primary" @click="openModal(true, {})" preIcon="ant-design:hdd-outlined">{{ t('system.user.recycleBin') }}</a-button>
         <JThirdAppButton biz-type="user" :selected-row-keys="selectedRowKeys" syncToApp syncToLocal @sync-finally="onSyncFinally" />
-        <a-button type="primary" preIcon="ant-design:filter-outlined">{t('system.user.advancedSearch')}</a-button>
+        <a-button type="primary" preIcon="ant-design:filter-outlined">{{ t('system.user.advancedSearch') }}</a-button>
         <a-dropdown v-if="selectedRowKeys.length > 0">
           <template #overlay>
             <a-menu>
               <a-menu-item key="1" @click="batchHandleDelete">
                 <Icon icon="ant-design:delete-outlined"></Icon>
-                {t('common.delete')}
+                {{ t('common.delete') }}
               </a-menu-item>
               <a-menu-item key="2" @click="batchFrozen(2)">
                 <Icon icon="ant-design:lock-outlined"></Icon>
-                {t('common.lock')}
+                {{ t('common.lock') }}
               </a-menu-item>
               <a-menu-item key="3" @click="batchFrozen(1)">
                 <Icon icon="ant-design:unlock-outlined"></Icon>
-                {t('common.unlock')}
+                {{ t('common.unlock') }}
               </a-menu-item>
             </a-menu>
           </template>
           <a-button
-            >{t('system.user.batchOperations')}
+            >{{ t('system.user.batchOperations') }}
             <Icon icon="mdi:chevron-down"></Icon>
           </a-button>
         </a-dropdown>

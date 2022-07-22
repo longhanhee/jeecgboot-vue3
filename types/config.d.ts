@@ -3,7 +3,7 @@ import { ContentEnum, PermissionModeEnum, ThemeEnum, RouterTransitionEnum, Setti
 
 import { CacheTypeEnum } from '/@/enums/cacheEnum';
 
-export type LocaleType = 'zh_CN' | 'en' | 'ru' | 'ja' | 'ko';
+export type LocaleType = 'zh_CN' | 'en' | 'ru' | 'ja' | 'ko' | 'vi';
 
 export interface MenuSetting {
   bgColor: string;

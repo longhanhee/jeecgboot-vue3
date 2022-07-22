@@ -13,7 +13,7 @@
   import { getToken } from '/@/utils/auth';
   import { getFileAccessHttpUrl } from '/@/utils/common/compUtils';
 
-  type Lang = 'zh_CN' | 'en_US' | 'ja_JP' | 'ko_KR' | undefined;
+  type Lang = 'zh_CN' | 'en_US' | 'ja_JP' | 'ko_KR' | 'vi' | undefined;
 
   export default defineComponent({
     inheritAttrs: false,
@@ -58,7 +58,7 @@
         }
       );
 
-      const getCurrentLang = computed((): 'zh_CN' | 'en_US' | 'ja_JP' | 'ko_KR' => {
+      const getCurrentLang = computed((): Lang => {
         let lang: Lang;
         switch (unref(getLocale)) {
           case 'en':
@@ -70,8 +70,11 @@
           case 'ko':
             lang = 'ko_KR';
             break;
+          case 'vi':
+            lang = 'vi';
+            break;
           default:
-            lang = 'zh_CN';
+            lang = 'en_US';
         }
         return lang;
       });
