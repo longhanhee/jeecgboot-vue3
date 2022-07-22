@@ -26,6 +26,7 @@ export default {
   lock: 'Lock',
   unlock: 'Unlock',
   agent: 'Agent',
+  save: 'Save',
   new: 'New',
   retrieve: 'Retrieve',
   confirm: 'Confirm',

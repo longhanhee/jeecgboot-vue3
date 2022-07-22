@@ -39,7 +39,7 @@
             <Icon icon="ant-design:up-outlined" />
           </a-button>
         </a-dropdown>
-        <a-button type="primary" preIcon="ant-design:save-filled" @click="onSubmit">{{ t('common.keep') }}</a-button>
+        <a-button type="primary" preIcon="ant-design:save-filled" @click="onSubmit">{{ t('common.save') }}</a-button>
       </div>
     </div>
   </a-spin>

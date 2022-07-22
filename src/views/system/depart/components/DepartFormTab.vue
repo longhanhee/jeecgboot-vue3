@@ -4,7 +4,7 @@
     <div class="j-box-bottom-button offset-20" style="margin-top: 30px">
       <div class="j-box-bottom-button-float">
         <a-button preIcon="ant-design:sync-outlined" @click="onReset">{{ t('common.reset') }}</a-button>
-        <a-button type="primary" preIcon="ant-design:save-filled" @click="onSubmit">{{ t('common.keep') }}</a-button>
+        <a-button type="primary" preIcon="ant-design:save-filled" @click="onSubmit">{{ t('common.save') }}</a-button>
       </div>
     </div>
   </a-spin>
