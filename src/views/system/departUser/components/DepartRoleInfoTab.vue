@@ -1,9 +1,9 @@
 <template>
-  <!--引用表格-->
+  <!--Reference form-->
   <BasicTable @register="registerTable" :rowSelection="rowSelection">
-    <!--插槽:table标题-->
+    <!--Slot: table title-->
     <template #tableTitle>
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="addDepartRole">添加部门角色</a-button>
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="addDepartRole">{{ t('system.depart.addDepartmentRole') }}</a-button>
       <template v-if="selectedRowKeys.length > 0">
         <a-divider type="vertical" />
         <a-dropdown>
@@ -11,23 +11,23 @@
             <a-menu>
               <a-menu-item key="1" @click="onDeleteDepartRoleBatch">
                 <icon icon="ant-design:delete-outlined" />
-                <span>删除</span>
+                <span>{{ t('common.delete') }}</span>
               </a-menu-item>
             </a-menu>
           </template>
           <a-button>
-            <span>批量操作 </span>
+            <span>{{ t('common.batchOperation') }} </span>
             <icon icon="akar-icons:chevron-down" />
           </a-button>
         </a-dropdown>
       </template>
     </template>
-    <!-- 插槽：行内操作按钮 -->
+    <!-- Slot: operation button in the line -->
     <template #action="{ record }">
       <TableAction :actions="getTableAction(record)" :dropDownActions="getDropDownAction(record)" />
     </template>
   </BasicTable>
-  <!-- 添加部门弹窗 -->
+  <!-- Add department pop -up window -->
   <DepartRoleModal :departId="departId" @register="registerFormModal" @success="onFormModalSuccess" />
   <DepartRoleAuthDrawer @register="registerAuthDrawer" />
 </template>
@@ -45,16 +45,17 @@
   import { deleteBatchDepartRole, departRoleList } from '../depart.user.api';
   import { departRoleColumns, departRoleSearchFormSchema } from '../depart.user.data';
   import { ColEx } from '/@/components/Form/src/types';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const prefixCls = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
   defineEmits(['register']);
-  // 当前选中的部门ID，可能会为空，代表未选择部门
+  // The currently selected department ID may be empty, which means that there is no selection of the department
   const departId = computed(() => props.data?.id);
 
-  // 自适应列配置
+  // Adaptive configuration
   const adaptiveColProps: Partial<ColEx> = {
     xs: 24, // <576px
     sm: 24, // ≥576px
@@ -63,7 +64,7 @@
     xl: 12, // ≥1200px
     xxl: 8, // ≥1600px
   };
-  // 列表页面公共参数、方法
+  // List page public parameters and methods
   const { tableContext, createMessage } = useListPage({
     tableProps: {
       api: departRoleList,
@@ -82,28 +83,28 @@
           xxl: 6,
         },
         wrapperCol: {},
-        // 操作按钮配置
+        // Operation button configuration
         actionColOptions: {
           ...adaptiveColProps,
           style: { textAlign: 'left' },
         },
       },
-      // 请求之前对参数做处理
+      // Process the parameter before the request
       beforeFetch(params) {
         params.deptId = departId.value;
       },
     },
   });
 
-  // 注册 ListTable
+  // Register listtable
   const [registerTable, { reload, setProps, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
-  // 注册Form弹窗
+  // Register FORM Poppy Window
   const [registerFormModal, formModal] = useModal();
-  // 注册授权弹窗抽屉
+  // Registered authorized pop -up drawer
   const [registerAuthDrawer, authDrawer] = useDrawer();
 
-  // 监听 data 更改，重新加载数据
+  // Surveillance data changes, reload the data
   watch(
     () => props.data,
     () => reload()
@@ -112,12 +113,12 @@
     reload();
   });
 
-  // 清空选择的行
+  // Empty choice
   function clearSelection() {
     selectedRowKeys.value = [];
   }
 
-  // 添加部门角色
+  // Add a departmental role
   function addDepartRole() {
     formModal.openModal(true, {
       isUpdate: false,
@@ -125,7 +126,7 @@
     });
   }
 
-  // 编辑部门角色
+  // Edit Department
   function editDepartRole(record) {
     formModal.openModal(true, {
       isUpdate: true,
@@ -133,15 +134,15 @@
     });
   }
 
-  // 授权部门角色
+  // Authorized department role
   function permissionDepartRole(record) {
     authDrawer.openDrawer(true, { record });
   }
 
-  // 批量删除部门角色
+  // Batch delete department role
   async function deleteDepartRole(idList, confirm) {
     if (!departId.value) {
-      createMessage.warning('请先选择一个部门');
+      createMessage.warning(t('system.depart.warning.departmentChoose'));
     } else {
       setLoading(true);
       let ids = unref(idList).join(',');
@@ -155,38 +156,38 @@
     return Promise.reject();
   }
 
-  // 批量删除部门角色事件
+  // Batch deletion of departmental characters
   async function onDeleteDepartRoleBatch() {
     try {
       await deleteDepartRole(selectedRowKeys, true);
-      // 批量删除成功后清空选择
+      // Clear the selection after the batch deletion is successful
       clearSelection();
     } catch (e) {}
   }
 
-  // 表单弹窗成功后的回调
+  // The recovery after the pop -up window is successful
   function onFormModalSuccess({ isUpdate, values }) {
     isUpdate ? updateTableDataRecord(values.id, values) : reload();
   }
 
   /**
-   * 操作栏
+   * Operating bar
    */
   function getTableAction(record): ActionItem[] {
-    return [{ label: '编辑', onClick: editDepartRole.bind(null, record) }];
+    return [{ label: t('common.edit'), onClick: editDepartRole.bind(null, record) }];
   }
 
   /**
-   * 下拉操作栏
+   * Drop -down operation bar
    */
   function getDropDownAction(record): ActionItem[] {
     return [
-      { label: '授权', onClick: permissionDepartRole.bind(null, record) },
+      { label: t('common.authorize'), onClick: permissionDepartRole.bind(null, record) },
       {
-        label: '删除',
+        label: t('common.delete'),
         color: 'error',
         popConfirm: {
-          title: '确认要删除吗？',
+          title: t('common.message.deleteWarning'),
           confirm: deleteDepartRole.bind(null, [record.id], false),
         },
       },

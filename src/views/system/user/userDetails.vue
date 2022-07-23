@@ -4,40 +4,42 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import { Description, DescItem, useDescription } from '/@/components/Description/index';
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const mockData = {
     username: 'test',
     nickName: 'VB',
     age: '123',
     phone: '15695909xxx',
     email: '190848757@qq.com',
-    addr: '厦门市思明区',
-    sex: '男',
+    addr: 'Xiamen Siming District',
+    sex: 'male',
     certy: '3504256199xxxxxxxxx',
     tag: 'orange',
   };
   const schema: DescItem[] = [
     {
       field: 'username',
-      label: '用户名',
+      label: t('system.user.username'),
     },
     {
       field: 'nickName',
-      label: '昵称',
+      label: t('system.user.nickname'),
       render: (curVal, data) => {
         return `${data.username}-${curVal}`;
       },
     },
     {
       field: 'phone',
-      label: '联系电话',
+      label: t('system.user.phonenumber'),
     },
     {
       field: 'email',
-      label: '邮箱',
+      label: t('system.user.email'),
     },
     {
       field: 'addr',
-      label: '地址',
+      label: t('system.user.address'),
     },
   ];
   export default defineComponent({

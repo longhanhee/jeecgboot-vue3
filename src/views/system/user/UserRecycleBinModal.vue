@@ -1,28 +1,28 @@
 <template>
-  <BasicModal v-bind="$attrs" @register="registerModal" title="用户回收站" :showOkBtn="false" width="1000px" destroyOnClose>
+  <BasicModal v-bind="$attrs" @register="registerModal" @title="t('system.user.useRecycleBin')" :showOkBtn="false" width="1000px" destroyOnClose>
     <BasicTable @register="registerTable" :rowSelection="rowSelection">
-      <!--插槽:table标题-->
+      <!--GroTable titlele title-->
       <template #tableTitle>
         <a-dropdown v-if="checkedKeys.length > 0">
           <template #overlay>
             <a-menu>
               <a-menu-item key="1" @click="batchHandleDelete">
                 <Icon icon="ant-design:delete-outlined"></Icon>
-                批量删除
+                {{ t('system.user.batchDelete') }}
               </a-menu-item>
               <a-menu-item key="1" @click="batchHandleRevert">
                 <Icon icon="ant-design:redo-outlined"></Icon>
-                批量还原
+                {{ t('system.user.batchRestore') }}
               </a-menu-item>
             </a-menu>
           </template>
           <a-button
-            >批量操作
+            >{{ t('system.user.batchOperations') }}
             <Icon icon="ant-design:down-outlined"></Icon>
           </a-button>
         </a-dropdown>
       </template>
-      <!--操作栏-->
+      <!--Operating bar-->
       <template #action="{ record }">
         <TableAction :actions="getTableAction(record)" />
       </template>
@@ -36,15 +36,16 @@
   import { recycleColumns } from './user.data';
   import { getRecycleBinList, putRecycleBin, deleteRecycleBin } from './user.api';
   import { useMessage } from '/@/hooks/web/useMessage';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const { createConfirm } = useMessage();
-  // 声明Emits
+  // State Emits
   const emit = defineEmits(['success', 'register']);
   const checkedKeys = ref<Array<string | number>>([]);
   const [registerModal] = useModalInner(() => {
     checkedKeys.value = [];
   });
-  //注册table数据
+  //Register Table data
   const [registerTable, { reload }] = useTable({
     api: getRecycleBinList,
     columns: recycleColumns,
@@ -60,14 +61,14 @@
     canResize: false,
     actionColumn: {
       width: 150,
-      title: '操作',
+      title: t('system.user.operate'),
       dataIndex: 'action',
       slots: { customRender: 'action' },
       fixed: undefined,
     },
   });
   /**
-   * 选择列配置
+   * Select column configuration
    */
   const rowSelection = {
     type: 'checkbox',
@@ -76,58 +77,58 @@
     onChange: onSelectChange,
   };
   /**
-   * 选择事件
+   * Choose an incident
    */
   function onSelectChange(selectedRowKeys: (string | number)[]) {
     checkedKeys.value = selectedRowKeys;
   }
   /**
-   * 还原事件
+   * Restore event
    */
   async function handleRevert(record) {
     await putRecycleBin({ userIds: record.id }, reload);
     emit('success');
   }
   /**
-   * 批量还原事件
+   * Batch restoration event
    */
   function batchHandleRevert() {
     handleRevert({ id: toRaw(unref(checkedKeys)).join(',') });
   }
   /**
-   * 删除事件
+   * Delete incident
    */
   async function handleDelete(record) {
     await deleteRecycleBin({ userIds: record.id }, reload);
   }
   /**
-   * 批量删除事件
+   * Batch deletion event
    */
   function batchHandleDelete() {
     createConfirm({
       iconType: 'warning',
-      title: '删除',
-      content: '确定要永久删除吗？删除后将不可恢复！',
+      title: t('common.delete'),
+      content: t('system.user.warning.instantDeleteWarning'),
       onOk: () => handleDelete({ id: toRaw(unref(checkedKeys)).join(',') }),
       onCancel() {},
     });
   }
-  //获取操作栏事件
+  //Get the operation bar event
   function getTableAction(record) {
     return [
       {
-        label: '取回',
+        label: t('common.retrieve'),
         icon: 'ant-design:redo-outlined',
         popConfirm: {
-          title: '是否确认还原',
+          title: t('system.user.confirmRestore'),
           confirm: handleRevert.bind(null, record),
         },
       },
       {
-        label: '彻底删除',
+        label: t('system.user.removeCompletely'),
         icon: 'ant-design:scissor-outlined',
         popConfirm: {
-          title: '是否确认删除',
+          title: t('system.user.warning.instantDeleteWarning'),
           confirm: handleDelete.bind(null, record),
         },
       },

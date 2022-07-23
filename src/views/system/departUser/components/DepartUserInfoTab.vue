@@ -1,28 +1,28 @@
 <template>
-  <!--引用表格-->
+  <!--Reference form-->
   <BasicTable @register="registerTable" :rowSelection="rowSelection">
-    <!--插槽:table标题-->
+    <!--Slot: table title-->
     <template #tableTitle>
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="selectAddUser">添加已有用户</a-button>
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="createUser">新建用户</a-button>
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="selectAddUser">{{ t('system.depart.addExistingUsers') }}</a-button>
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="createUser">{{ t('system.depart.newUser') }}</a-button>
       <template v-if="selectedRowKeys.length > 0">
         <a-dropdown>
           <template #overlay>
             <a-menu>
               <a-menu-item key="1" @click="onUnlinkDepartUserBatch">
                 <icon icon="bx:bx-unlink" />
-                <span>取消关联</span>
+                <span>{{ t('common.unlink') }}</span>
               </a-menu-item>
             </a-menu>
           </template>
           <a-button>
-            <span>批量操作 </span>
+            <span>{{ t('common.batchOperation') }} </span>
             <icon icon="akar-icons:chevron-down" />
           </a-button>
         </a-dropdown>
       </template>
     </template>
-    <!-- 插槽：行内操作按钮 -->
+    <!-- Slot: operation button in the line -->
     <template #action="{ record }">
       <TableAction :actions="getTableAction(record)" :dropDownActions="getDropDownAction(record)" />
     </template>
@@ -45,15 +45,16 @@
   import { departUserList, linkDepartUserBatch, unlinkDepartUserBatch } from '../depart.user.api';
   import { userInfoColumns, userInfoSearchFormSchema } from '../depart.user.data';
   import { ColEx } from '/@/components/Form/src/types';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const prefixCls = inject('prefixCls');
   const props = defineProps({
     data: { require: true, type: Object },
   });
-  // 当前选中的部门ID，可能会为空，代表未选择部门
+  // The currently selected department ID may be empty, which means that there is no selection of the department
   const departId = computed(() => props.data?.id);
 
-  // 自适应列配置
+  // Adaptive configuration
   const adaptiveColProps: Partial<ColEx> = {
     xs: 24, // <576px
     sm: 24, // ≥576px
@@ -62,7 +63,7 @@
     xl: 12, // ≥1200px
     xxl: 8, // ≥1600px
   };
-  // 列表页面公共参数、方法
+  // List page public parameters and methods
   const { tableContext, createMessage } = useListPage({
     tableProps: {
       api: departUserList,
@@ -81,51 +82,51 @@
           xxl: 5,
         },
         wrapperCol: {},
-        // 操作按钮配置
+        // Operation button configuration
         actionColOptions: {
           ...adaptiveColProps,
           style: { textAlign: 'left' },
         },
       },
-      // 请求之前对参数做处理
+      // Process the parameter before the request
       beforeFetch(params) {
         params.depId = departId.value;
       },
     },
   });
 
-  // 注册 ListTable
+  // Register listtable
   const [registerTable, { reload, setProps, setLoading, updateTableDataRecord }, { rowSelection, selectedRowKeys }] = tableContext;
 
   watch(
     () => props.data,
     () => reload()
   );
-  //注册drawer
+  //Register DRAWER
   const [registerDrawer, { openDrawer, setDrawerProps }] = useDrawer();
   const [registerUserAuthDrawer, userAuthDrawer] = useDrawer();
-  // 注册用户选择 modal
+  // Registered users choose MODAL
   const [registerSelUserModal, selUserModal] = useModal();
 
-  // 清空选择的行
+  // Empty choice
   function clearSelection() {
     selectedRowKeys.value = [];
   }
 
-  // 查看部门角色
+  // Check the role of the department
   function showDepartRole(record) {
     userAuthDrawer.openDrawer(true, { userId: record.id, departId });
   }
 
-  // 创建用户
+  // Create users
   function createUser() {
     if (!departId.value) {
-      createMessage.warning('请先选择一个部门');
+      createMessage.warning(t('system.depart.warning.departmentChoose'));
     } else {
       openDrawer(true, {
         isUpdate: false,
         departDisabled: true,
-        // 初始化负责部门
+        // Initialization responsible department
         nextDepartOptions: { value: props.data?.key, label: props.data?.title },
         record: {
           activitiSync: 1,
@@ -136,7 +137,7 @@
     }
   }
 
-  // 查看用户详情
+  // View user details
   function showUserDetail(record) {
     openDrawer(true, {
       record,
@@ -146,20 +147,20 @@
     });
   }
 
-  // 编辑用户信息
+  // Edit user information
   function editUserInfo(record) {
     openDrawer(true, { isUpdate: true, record, departDisabled: true });
   }
 
-  // 选择添加已有用户
+  // Choose to add existing users
   function selectAddUser() {
     selUserModal.openModal();
   }
 
-  // 批量取消关联部门和用户之间的关系
+  // Cancellation of the relationship between related departments and users in batches
   async function unlinkDepartUser(idList, confirm) {
     if (!departId.value) {
-      createMessage.warning('请先选择一个部门');
+      createMessage.warning(t('system.depart.warning.departmentChoose'));
     } else {
       setLoading(true);
       let userIds = unref(idList).join(',');
@@ -173,16 +174,16 @@
     return Promise.reject();
   }
 
-  // 批量取消关联事件
+  // Cancellation of related incidents in batches
   async function onUnlinkDepartUserBatch() {
     try {
       await unlinkDepartUser(selectedRowKeys, true);
-      // 批量删除成功后清空选择
+      // Clear the selection after the batch deletion is successful
       clearSelection();
     } catch (e) {}
   }
 
-  // 选择用户成功
+  // Select users successfully
   async function onSelectUserOk(options, userIdList) {
     if (userIdList.length > 0) {
       try {
@@ -196,31 +197,31 @@
   }
 
   /**
-   * 用户抽屉表单成功回调
+   * User drawer form successfully call back
    */
   function onUserDrawerSuccess({ isUpdate, values }) {
     isUpdate ? updateTableDataRecord(values.id, values) : reload();
   }
 
   /**
-   * 操作栏
+   * Operating bar
    */
   function getTableAction(record): ActionItem[] {
-    return [{ label: '编辑', onClick: editUserInfo.bind(null, record) }];
+    return [{ label: t('common.edit'), onClick: editUserInfo.bind(null, record) }];
   }
 
   /**
-   * 下拉操作栏
+   * Drop -down operation bar
    */
   function getDropDownAction(record): ActionItem[] {
     return [
-      { label: '部门角色', onClick: showDepartRole.bind(null, record) },
-      { label: '用户详情', onClick: showUserDetail.bind(null, record) },
+      { label: t('system.depart.departmentRole'), onClick: showDepartRole.bind(null, record) },
+      { label: t('system.depart.userDetails'), onClick: showUserDetail.bind(null, record) },
       {
-        label: '取消关联',
+        label: t('common.unlink'),
         color: 'error',
         popConfirm: {
-          title: '确认取消关联吗？',
+          title: t('system.depart.warning.unlinkWarning'),
           confirm: unlinkDepartUser.bind(null, [record.id], false),
         },
       },

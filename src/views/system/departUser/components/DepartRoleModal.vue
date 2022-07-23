@@ -16,27 +16,27 @@
 
   const emit = defineEmits(['success', 'register']);
   const props = defineProps({
-    // 当前部门ID
+    // Current department ID
     departId: { require: true, type: String },
   });
   const prefixCls = inject('prefixCls');
-  // 当前是否是更新模式
+  // Is it currently an update mode
   const isUpdate = ref<boolean>(true);
-  // 当前的弹窗数据
+  // Current pop -up data
   const model = ref<object>({});
   const title = computed(() => (isUpdate.value ? '编辑' : '新增'));
 
-  //注册表单
+  //Register
   const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
     schemas: departRoleModalFormSchema,
     showActionButtonGroup: false,
   });
 
-  // 注册弹窗
+  // Register
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     isUpdate.value = unref(data?.isUpdate);
-    // 无论新增还是编辑，都可以设置表单值
+    // No matter the new or editor, you can set the form value
     let record = unref(data?.record);
     if (typeof record === 'object') {
       model.value = record;
@@ -44,17 +44,17 @@
     }
   });
 
-  //提交事件
+  //Submit incident
   async function handleOk() {
     try {
       setModalProps({ confirmLoading: true });
       let values = await validate();
       values.departId = unref(props.departId);
-      //提交表单
+      //submit Form
       await saveOrUpdateDepartRole(values, isUpdate.value);
-      //关闭弹窗
+      //Close the pop -up window
       closeModal();
-      //刷新列表
+      //refresh the list
       emit('success', { isUpdate: unref(isUpdate), values });
     } finally {
       setModalProps({ confirmLoading: false });

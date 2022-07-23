@@ -12,38 +12,40 @@
 
   import { saveOrUpdateDepart } from '../depart.api';
   import { useBasicFormSchema, orgCategoryOptions } from '../depart.data';
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
 
   const emit = defineEmits(['success', 'register']);
   const props = defineProps({
     rootTreeData: { type: Array, default: () => [] },
   });
   const prefixCls = inject('prefixCls');
-  // 当前是否是更新模式
+  // Is it currently an update mode
   const isUpdate = ref<boolean>(false);
-  // 当前的弹窗数据
+  // Current pop -up data
   const model = ref<object>({});
-  const title = computed(() => (isUpdate.value ? '编辑' : '新增'));
+  const title = computed(() => (isUpdate.value ? t('common.edit') : t('system.depart.newlyIncrease')));
 
-  //注册表单
+  //Register
   const [registerForm, { resetFields, setFieldsValue, validate, updateSchema }] = useForm({
     schemas: useBasicFormSchema().basicFormSchema,
     showActionButtonGroup: false,
   });
 
-  // 注册弹窗
+  // Register
   const [registerModal, { setModalProps, closeModal }] = useModalInner(async (data) => {
     await resetFields();
     isUpdate.value = unref(data?.isUpdate);
-    // 当前是否为添加子级
+    // Is it currently a sub -level?
     let isChild = unref(data?.isChild);
     let categoryOptions = isChild ? orgCategoryOptions.child : orgCategoryOptions.root;
-    // 隐藏不需要展示的字段
+    // Hidden fields that do not need to be displayed
     updateSchema([
       {
         field: 'parentId',
         show: isChild,
         componentProps: {
-          // 如果是添加子部门，就禁用该字段
+          // If it is a sub -department, this field is disabled
           disabled: isChild,
           treeData: props.rootTreeData,
         },
@@ -62,7 +64,7 @@
     if (typeof record !== 'object') {
       record = {};
     }
-    // 赋默认值
+    // Fumer recognition
     record = Object.assign(
       {
         departOrder: 0,
@@ -74,16 +76,16 @@
     await setFieldsValue({ ...record });
   });
 
-  // 提交事件
+  // Submit incident
   async function handleOk() {
     try {
       setModalProps({ confirmLoading: true });
       let values = await validate();
-      //提交表单
+      //submit Form
       await saveOrUpdateDepart(values, isUpdate.value);
-      //关闭弹窗
+      //Close the pop -up window
       closeModal();
-      //刷新列表
+      //refresh the list
       emit('success');
     } finally {
       setModalProps({ confirmLoading: false });

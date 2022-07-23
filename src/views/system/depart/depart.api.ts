@@ -1,7 +1,8 @@
 import { unref } from 'vue';
 import { defHttp } from '/@/utils/http/axios';
 import { useMessage } from '/@/hooks/web/useMessage';
-
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
 const { createConfirm } = useMessage();
 
 export enum Api {
@@ -24,12 +25,12 @@ export enum Api {
 }
 
 /**
- * 获取部门树列表
+ * List of Tree Tree
  */
 export const queryDepartTreeSync = (params?) => defHttp.get({ url: Api.queryDepartTreeSync, params });
 
 /**
- * 保存或者更新部门角色
+ * Save or update the role of the department
  */
 export const saveOrUpdateDepart = (params, isUpdate) => {
   if (isUpdate) {
@@ -40,7 +41,7 @@ export const saveOrUpdateDepart = (params, isUpdate) => {
 };
 
 /**
- * 批量删除部门角色
+ * Batch delete department role
  */
 export const deleteBatchDepart = (params, confirm = false) => {
   return new Promise((resolve, reject) => {
@@ -50,8 +51,8 @@ export const deleteBatchDepart = (params, confirm = false) => {
     if (confirm) {
       createConfirm({
         iconType: 'warning',
-        title: '删除',
-        content: '确定要删除吗？',
+        title: t('common.delete'),
+        content: t('common.message.deleteWarning'),
         onOk: () => doDelete(),
         onCancel: () => reject(),
       });
@@ -62,34 +63,34 @@ export const deleteBatchDepart = (params, confirm = false) => {
 };
 
 /**
- * 获取权限树列表
+ * List of obtaining permissions trees
  */
 export const queryRoleTreeList = (params?) => defHttp.get({ url: Api.roleQueryTreeList, params });
 /**
- * 查询部门权限
+ * Query department authority
  */
 export const queryDepartPermission = (params?) => defHttp.get({ url: Api.queryDepartPermission, params });
 /**
- * 保存部门权限
+ * Save departments authority
  */
 export const saveDepartPermission = (params) => defHttp.post({ url: Api.saveDepartPermission, params });
 
 /**
- *  查询部门数据权限列表
+ *  Query department data permissions list
  */
 export const queryDepartDataRule = (functionId, departId, params?) => {
   let url = `${Api.dataRule}/${unref(functionId)}/${unref(departId)}`;
   return defHttp.get({ url, params });
 };
 /**
- * 保存部门数据权限
+ * Preserving department data permissions
  */
 export const saveDepartDataRule = (params) => defHttp.post({ url: Api.dataRule, params });
 /**
- * 获取登录用户部门信息
+ * Get information on login user sector
  */
 export const getUserDeparts = (params?) => defHttp.get({ url: Api.getCurrentUserDeparts, params });
 /**
- * 切换选择部门
+ * Switch selection department
  */
 export const selectDepart = (params?) => defHttp.put({ url: Api.selectDepart, params });

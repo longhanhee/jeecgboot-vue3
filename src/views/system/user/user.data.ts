@@ -3,25 +3,27 @@ import { FormSchema } from '/@/components/Table';
 import { getAllRolesList, getAllTenantList } from './user.api';
 import { rules } from '/@/utils/helper/validator';
 import { render } from '/@/utils/common/renderUtils';
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
 export const columns: BasicColumn[] = [
   {
-    title: '用户账号',
+    title: t('system.user.username'),
     dataIndex: 'username',
     width: 120,
   },
   {
-    title: '用户姓名',
+    title: t('system.user.realname'),
     dataIndex: 'realname',
     width: 100,
   },
   {
-    title: '头像',
+    title: t('system.user.avatar'),
     dataIndex: 'avatar',
     width: 120,
     customRender: render.renderAvatar,
   },
   {
-    title: '性别',
+    title: t('system.user.gender'),
     dataIndex: 'sex',
     width: 80,
     sorter: true,
@@ -30,27 +32,27 @@ export const columns: BasicColumn[] = [
     },
   },
   {
-    title: '生日',
+    title: t('system.user.birthday'),
     dataIndex: 'birthday',
     width: 100,
   },
   {
-    title: '手机号',
+    title: t('system.user.phonenumber'),
     dataIndex: 'phone',
     width: 100,
   },
   {
-    title: '部门',
+    title: t('system.user.department'),
     width: 150,
     dataIndex: 'orgCodeTxt',
   },
   {
-    title: '负责部门',
+    title: t('system.user.responsibleDepartment'),
     width: 150,
     dataIndex: 'departIds_dictText',
   },
   {
-    title: '状态',
+    title: t('system.user.state'),
     dataIndex: 'status_dictText',
     width: 80,
   },
@@ -58,23 +60,23 @@ export const columns: BasicColumn[] = [
 
 export const recycleColumns: BasicColumn[] = [
   {
-    title: '用户账号',
+    title: t('system.user.username'),
     dataIndex: 'username',
     width: 100,
   },
   {
-    title: '用户姓名',
+    title: t('system.user.realname'),
     dataIndex: 'realname',
     width: 100,
   },
   {
-    title: '头像',
+    title: t('system.user.avatar'),
     dataIndex: 'avatar',
     width: 80,
     customRender: render.renderAvatar,
   },
   {
-    title: '性别',
+    title: t('system.user.gender'),
     dataIndex: 'sex',
     width: 80,
     sorter: true,
@@ -86,41 +88,41 @@ export const recycleColumns: BasicColumn[] = [
 
 export const searchFormSchema: FormSchema[] = [
   {
-    label: '账号',
+    label: t('system.user.username'),
     field: 'username',
     component: 'JInput',
     colProps: { span: 6 },
   },
   {
-    label: '性别',
+    label: t('system.user.gender'),
     field: 'sex',
     component: 'JDictSelectTag',
     componentProps: {
       dictCode: 'sex',
-      placeholder: '请选择性别',
+      placeholder: t('system.user.genderSelect'),
       stringToNumber: true,
     },
     colProps: { span: 6 },
   },
   {
-    label: '真实名称',
+    label: t('system.user.realname'),
     field: 'realname',
     component: 'Input',
     colProps: { span: 6 },
   },
   {
-    label: '手机号码',
+    label: t('system.user.phonenumber'),
     field: 'phone',
     component: 'Input',
     colProps: { span: 6 },
   },
   {
-    label: '用户状态',
+    label: t('system.user.status'),
     field: 'status',
     component: 'JDictSelectTag',
     componentProps: {
       dictCode: 'user_status',
-      placeholder: '请选择状态',
+      placeholder: t('system.user.statusSelect'),
       stringToNumber: true,
     },
     colProps: { span: 6 },
@@ -135,7 +137,7 @@ export const formSchema: FormSchema[] = [
     show: false,
   },
   {
-    label: '用户账号',
+    label: t('system.user.username'),
     field: 'username',
     component: 'Input',
     dynamicDisabled: ({ values }) => {
@@ -144,37 +146,37 @@ export const formSchema: FormSchema[] = [
     dynamicRules: ({ model, schema }) => rules.duplicateCheckRule('sys_user', 'username', model, schema, true),
   },
   {
-    label: '登录密码',
+    label: t('system.user.password'),
     field: 'password',
     component: 'StrengthMeter',
     rules: [
       {
         required: true,
-        message: '请输入登录密码',
+        message: t('system.user.passwordPlaceholder'),
       },
     ],
   },
   {
-    label: '确认密码',
+    label: t('system.user.confirmPassword'),
     field: 'confirmPassword',
     component: 'InputPassword',
     dynamicRules: ({ values }) => rules.confirmPassword(values, true),
   },
   {
-    label: '用户姓名',
+    label: t('system.user.realname'),
     field: 'realname',
     required: true,
     component: 'Input',
   },
   {
-    label: '工号',
+    label: t('system.user.jobNumber'),
     field: 'workNo',
     required: true,
     component: 'Input',
     dynamicRules: ({ model, schema }) => rules.duplicateCheckRule('sys_user', 'work_no', model, schema, true),
   },
   {
-    label: '职务',
+    label: t('system.user.jobTitle'),
     field: 'post',
     required: false,
     component: 'JSelectPosition',
@@ -184,7 +186,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: '角色',
+    label: t('system.user.role'),
     field: 'selectedroles',
     component: 'ApiSelect',
     componentProps: {
@@ -195,7 +197,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: '所属部门',
+    label: t('system.user.department'),
     field: 'selecteddeparts',
     component: 'JSelectDept',
     componentProps: ({ formActionType, formModel }) => {
@@ -206,21 +208,21 @@ export const formSchema: FormSchema[] = [
 
         onSelect: (options, values) => {
           const { updateSchema } = formActionType;
-          //所属部门修改后更新负责部门下拉框数据
+          //After the departments are modified
           updateSchema([
             {
               field: 'departIds',
               componentProps: { options },
             },
           ]);
-          //所属部门修改后更新负责部门数据
+          //After the departments are revised, the responsible department data is updated
           formModel.departIds && (formModel.departIds = formModel.departIds.filter((item) => values.value.indexOf(item) > -1));
         },
       };
     },
   },
   {
-    label: '租户',
+    label: t('system.user.tenant'),
     field: 'relTenantIds',
     component: 'ApiSelect',
     componentProps: {
@@ -232,15 +234,15 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: '身份',
+    label: t('system.user.identity'),
     field: 'userIdentity',
     component: 'RadioGroup',
     defaultValue: 1,
     componentProps: ({ formModel }) => {
       return {
         options: [
-          { label: '普通用户', value: 1, key: '1' },
-          { label: '上级', value: 2, key: '2' },
+          { label: t('system.user.generalUser'), value: 1, key: '1' },
+          { label: t('system.user.superior'), value: 2, key: '2' },
         ],
         onChange: () => {
           formModel.userIdentity == 1 && (formModel.departIds = []);
@@ -249,7 +251,7 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: '负责部门',
+    label: t('system.user.responsibleDepartment'),
     field: 'departIds',
     component: 'Select',
     componentProps: {
@@ -258,7 +260,7 @@ export const formSchema: FormSchema[] = [
     ifShow: ({ values }) => values.userIdentity == 2,
   },
   {
-    label: '头像',
+    label: t('system.user.avatar'),
     field: 'avatar',
     component: 'JImageUpload',
     componentProps: {
@@ -266,28 +268,28 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: '生日',
+    label: t('system.user.birthday'),
     field: 'birthday',
     component: 'DatePicker',
   },
   {
-    label: '性别',
+    label: t('system.user.gender'),
     field: 'sex',
     component: 'JDictSelectTag',
     componentProps: {
       dictCode: 'sex',
-      placeholder: '请选择性别',
+      placeholder: t('system.user.genderSelect'),
       stringToNumber: true,
     },
   },
   {
-    label: '邮箱',
+    label: t('system.user.email'),
     field: 'email',
     component: 'Input',
     rules: rules.rule('email', false),
   },
   {
-    label: '手机号码',
+    label: t('system.user.phonenumber'),
     field: 'phone',
     component: 'Input',
     dynamicRules: ({ model, schema }) => {
@@ -295,13 +297,13 @@ export const formSchema: FormSchema[] = [
     },
   },
   {
-    label: '座机',
+    label: t('system.user.landline'),
     field: 'telephone',
     component: 'Input',
-    rules: [{ pattern: /^0\d{2,3}-[1-9]\d{6,7}$/, message: '请输入正确的座机号码' }],
+    rules: [{ pattern: /^0\d{2,3}-[1-9]\d{6,7}$/, message: t('system.user.landlineError') }],
   },
   {
-    label: '工作流引擎',
+    label: t('system.user.workflowEngine'),
     field: 'activitiSync',
     defaultValue: 1,
     component: 'JDictSelectTag',
@@ -315,27 +317,27 @@ export const formSchema: FormSchema[] = [
 
 export const formPasswordSchema: FormSchema[] = [
   {
-    label: '用户账号',
+    label: t('system.user.username'),
     field: 'username',
     component: 'Input',
     componentProps: { readOnly: true },
   },
   {
-    label: '登录密码',
+    label: t('system.user.password'),
     field: 'password',
     component: 'StrengthMeter',
     componentProps: {
-      placeholder: '请输入登录密码',
+      placeholder: t('system.user.passwordPlaceholder'),
     },
     rules: [
       {
         required: true,
-        message: '请输入登录密码',
+        message: t('system.user.passwordPlaceholder'),
       },
     ],
   },
   {
-    label: '确认密码',
+    label: t('system.user.confirmPassword'),
     field: 'confirmPassword',
     component: 'InputPassword',
     dynamicRules: ({ values }) => rules.confirmPassword(values, true),
@@ -351,7 +353,7 @@ export const formAgentSchema: FormSchema[] = [
   },
   {
     field: 'userName',
-    label: '用户名',
+    label: t('system.user.username'),
     component: 'Input',
     componentProps: {
       readOnly: true,
@@ -360,7 +362,7 @@ export const formAgentSchema: FormSchema[] = [
   },
   {
     field: 'agentUserName',
-    label: '代理人用户名',
+    label: t('system.user.delegateUsername'),
     required: true,
     component: 'JSelectUser',
     componentProps: {
@@ -371,29 +373,29 @@ export const formAgentSchema: FormSchema[] = [
   },
   {
     field: 'startTime',
-    label: '代理开始时间',
+    label: t('system.user.startTime'),
     component: 'DatePicker',
     required: true,
     componentProps: {
       showTime: true,
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
-      placeholder: '请选择代理开始时间',
+      placeholder: t('system.user.startTimePlaceholder'),
     },
   },
   {
     field: 'endTime',
-    label: '代理结束时间',
+    label: t('system.user.endTime'),
     component: 'DatePicker',
     required: true,
     componentProps: {
       showTime: true,
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
-      placeholder: '请选择代理结束时间',
+      placeholder: t('system.user.endTimePlaceholder'),
     },
   },
   {
     field: 'status',
-    label: '状态',
+    label: t('system.user.status'),
     component: 'JDictSelectTag',
     defaultValue: '1',
     componentProps: {

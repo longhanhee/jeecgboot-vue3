@@ -1,6 +1,7 @@
 import { defHttp } from '/@/utils/http/axios';
 import { Modal } from 'ant-design-vue';
-
+import { useI18n } from '/@/hooks/web/useI18n';
+const { t } = useI18n();
 enum Api {
   list = '/sys/user/list',
   save = '/sys/user/add',
@@ -26,28 +27,28 @@ enum Api {
   syncUser = '/act/process/extActProcess/doSyncUser',
 }
 /**
- * 导出api
+ * Export API
  * @param params
  */
 export const getExportUrl = Api.exportXls;
 /**
- * 导入api
+ * Import API
  */
 export const getImportUrl = Api.importExcel;
 /**
- * 列表接口
+ * List interface
  * @param params
  */
 export const list = (params) => defHttp.get({ url: Api.list, params });
 
 /**
- * 用户角色接口
+ * User interface
  * @param params
  */
 export const getUserRoles = (params) => defHttp.get({ url: Api.getUserRole, params }, { errorMessageMode: 'none' });
 
 /**
- * 删除用户
+ * delete users
  */
 export const deleteUser = (params, handleSuccess) => {
   return defHttp.delete({ url: Api.deleteUser, params }, { joinParamsToUrl: true }).then(() => {
@@ -55,15 +56,15 @@ export const deleteUser = (params, handleSuccess) => {
   });
 };
 /**
- * 批量删除用户
+ * Batch delete users
  * @param params
  */
 export const batchDeleteUser = (params, handleSuccess) => {
   Modal.confirm({
-    title: '确认删除',
-    content: '是否删除选中数据',
-    okText: '确认',
-    cancelText: '取消',
+    title: t('system.user.confirmDelete'),
+    content: t('system.user.warning.deleteWarning'),
+    okText: t('common.confirm'),
+    cancelText: t('common.cancel'),
     onOk: () => {
       return defHttp.delete({ url: Api.deleteBatch, data: params }, { joinParamsToUrl: true }).then(() => {
         handleSuccess();
@@ -72,7 +73,7 @@ export const batchDeleteUser = (params, handleSuccess) => {
   });
 };
 /**
- * 保存或者更新用户
+ * Save or update the user
  * @param params
  */
 export const saveOrUpdateUser = (params, isUpdate) => {
@@ -80,25 +81,25 @@ export const saveOrUpdateUser = (params, isUpdate) => {
   return defHttp.post({ url: url, params });
 };
 /**
- * 唯一校验
+ * Unique school inspection
  * @param params
  */
 export const duplicateCheck = (params) => defHttp.get({ url: Api.duplicateCheck, params }, { isTransformResponse: false });
 /**
- * 获取全部角色
+ * Get all the roles
  * @param params
  */
 export const getAllRolesList = (params) => defHttp.get({ url: Api.allRolesList, params });
 /**
- * 获取全部租户
+ * Get all the tenants
  */
 export const getAllTenantList = (params) => defHttp.get({ url: Api.allTenantList, params });
 /**
- * 获取指定用户负责部门
+ * Get the designated user responsible department
  */
 export const getUserDepartList = (params) => defHttp.get({ url: Api.userDepartList, params }, { successMessageMode: 'none' });
 /**
- * 获取全部职务
+ * Get all your position
  */
 export const getAllPostList = (params) => {
   return new Promise((resolve) => {
@@ -108,12 +109,12 @@ export const getAllPostList = (params) => {
   });
 };
 /**
- * 回收站列表
+ * Recycling station list
  * @param params
  */
 export const getRecycleBinList = (params) => defHttp.get({ url: Api.recycleBinList, params });
 /**
- * 回收站还原
+ * Recycling station restoration
  * @param params
  */
 export const putRecycleBin = (params, handleSuccess) => {
@@ -122,7 +123,7 @@ export const putRecycleBin = (params, handleSuccess) => {
   });
 };
 /**
- * 回收站删除
+ * Recycling station delete
  * @param params
  */
 export const deleteRecycleBin = (params, handleSuccess) => {
@@ -131,14 +132,14 @@ export const deleteRecycleBin = (params, handleSuccess) => {
   });
 };
 /**
- * 修改密码
+ * change Password
  * @param params
  */
 export const changePassword = (params) => {
   return defHttp.put({ url: Api.changePassword, params });
 };
 /**
- * 冻结解冻
+ * Frozen
  * @param params
  */
 export const frozenBatch = (params, handleSuccess) => {
@@ -147,12 +148,12 @@ export const frozenBatch = (params, handleSuccess) => {
   });
 };
 /**
- * 获取用户代理
+ * Get user agent
  * @param params
  */
 export const getUserAgent = (params) => defHttp.get({ url: Api.getUserAgent, params }, { isTransformResponse: false });
 /**
- * 保存或者更新用户代理
+ * Save or update the user agent
  * @param params
  */
 export const saveOrUpdateAgent = (params) => {
@@ -161,7 +162,7 @@ export const saveOrUpdateAgent = (params) => {
 };
 
 /**
- * 用户同步流程
+ * User synchronization process
  * @param params
  */
 export const syncUser = () => defHttp.put({ url: Api.syncUser });

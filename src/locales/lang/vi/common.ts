@@ -1,0 +1,33 @@
+export default {
+  okText: 'OK',
+  closeText: 'Close',
+  cancelText: 'Cancel',
+  loadingText: 'Loading...',
+  saveText: 'Save',
+  delText: 'Delete',
+  resetText: 'Reset',
+  searchText: 'Search',
+  queryText: 'Search',
+
+  inputText: 'Please enter',
+  chooseText: 'Please choose',
+
+  redo: 'Refresh',
+  back: 'Back',
+
+  light: 'Light',
+  dark: 'Dark',
+  edit: 'Edit',
+  detail: 'Detail',
+  delete: 'Delete',
+  lock: 'Lock',
+  unlock: 'Unlock',
+  agent: 'Agent',
+  new: 'New',
+  retrieve: 'Retrieve',
+  confirm: 'Confirm',
+  cancel: 'Cancel',
+  export: 'Export',
+  import: 'Import',
+  upload: 'Upload',
+};

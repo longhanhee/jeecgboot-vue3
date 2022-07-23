@@ -10,13 +10,15 @@
   import { BasicDrawer, useDrawerInner } from '/@/components/Drawer';
   import { saveOrUpdateUser, getUserRoles, getUserDepartList } from './user.api';
   import { useDrawerAdaptiveWidth } from '/@/hooks/jeecg/useAdaptiveWidth';
-  // 声明Emits
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
+  // State Emits
   const emit = defineEmits(['success', 'register']);
   const attrs = useAttrs();
   const isUpdate = ref(true);
   const rowId = ref('');
   const departOptions = ref([]);
-  //表单配置
+  //Form configuration
   const [registerForm, { setProps, resetFields, setFieldsValue, validate, updateSchema }] = useForm({
     labelWidth: 90,
     schemas: formSchema,
@@ -24,7 +26,7 @@
   });
   // TODO [VUEN-527] https://www.teambition.com/task/6239beb894b358003fe93626
   const showFooter = ref(true);
-  //表单赋值
+  //Form assignment
   const [registerDrawer, { setDrawerProps, closeDrawer }] = useDrawerInner(async (data) => {
     await resetFields();
     showFooter.value = data?.showFooter ?? true;
@@ -32,15 +34,15 @@
     isUpdate.value = !!data?.isUpdate;
     if (unref(isUpdate)) {
       rowId.value = data.record.id;
-      //租户信息定义成数组
+      //Considiatric information definition into an array
       if (data.record.relTenantIds && !Array.isArray(data.record.relTenantIds)) {
         data.record.relTenantIds = data.record.relTenantIds.split(',');
       } else {
-        //【issues/I56C5I】用户管理中连续点两次编辑租户配置就丢失了
+        //【issues/I56c5i] User Management is lost in two consecutive editors to the tenant configuration
         //data.record.relTenantIds = [];
       }
 
-      //查角色/赋值/try catch 处理，不然编辑有问题
+      //Check the role/Assignment/try catch Processing, otherwise there is a problem with the editor
       try {
         const userRoles = await getUserRoles({ userid: data.record.id });
         if (userRoles && userRoles.length > 0) {
@@ -48,7 +50,7 @@
         }
       } catch (error) {}
 
-      //查所属部门/赋值
+      //Check the department/Assignment
       const userDepart = await getUserDepartList({ userId: data.record.id });
       if (userDepart && userDepart.length > 0) {
         data.record.selecteddeparts = userDepart;
@@ -58,15 +60,15 @@
           return { label: item.title, value: item.key };
         });
       }
-      //负责部门/赋值
+      //Responsible department/assignment
       data.record.departIds && !Array.isArray(data.record.departIds) && (data.record.departIds = data.record.departIds.split(','));
-      //update-begin---author:zyf   Date:20211210  for：避免空值显示异常------------
+      //update-begin---author:zyf   Date:20211210  for: Avoid the short value display abnormality------------
       data.record.departIds = data.record.departIds == '' ? [] : data.record.departIds;
-      //update-begin---author:zyf   Date:20211210  for：避免空值显示异常------------
+      //update-begin---author:zyf   Date:20211210  for: Avoid the short value display abnormality------------
     }
-    //处理角色用户列表情况(和角色列表有关系)
+    //Treatment oIt has something to do with the surface watchser list situation(It has something to do with the surface watch)
     data.selectedroles && (await setFieldsValue({ selectedroles: data.selectedroles }));
-    //编辑时隐藏密码/角色列表隐藏角色信息/我的部门时隐藏所属部门
+    //Edit Hidden password/corner list Hidden character information/My department hides the department's department
     updateSchema([
       {
         field: 'password',
@@ -89,32 +91,32 @@
         show: !data?.departDisabled ?? false,
       },
     ]);
-    // 无论新增还是编辑，都可以设置表单值
+    // No matter the new or editor, you can set the form value
     if (typeof data.record === 'object') {
       setFieldsValue({
         ...data.record,
       });
     }
-    // 隐藏底部时禁用整个表单
-    //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
+    // Disable the entire form when hiding the bottom
+    //update-begin-author:taoyan date:2022-5-24 for: VUEN-1117 【ISSUE】 0523 Week open source problem
     setProps({ disabled: !showFooter.value });
-    //update-end-author:taoyan date:2022-5-24 for: VUEN-1117【issue】0523周开源问题
+    //update-end-author:taoyan date:2022-5-24 for: VUEN-1117 【ISSUE】 0523 Week open source problem
   });
-  //获取标题
-  const getTitle = computed(() => (!unref(isUpdate) ? '新增用户' : '编辑用户'));
+  //Get the title
+  const getTitle = computed(() => (!unref(isUpdate) ? t('system.user.newUser') : t('system.user.editUser')));
   const { adaptiveWidth } = useDrawerAdaptiveWidth();
 
-  //提交事件
+  //Submit incident
   async function handleSubmit() {
     try {
       let values = await validate();
       setDrawerProps({ confirmLoading: true });
       values.userIdentity === 1 && (values.departIds = '');
-      //提交表单
+      //submit Form
       await saveOrUpdateUser(values, unref(isUpdate));
-      //关闭弹窗
+      //Close the pop -up window
       closeDrawer();
-      //刷新列表
+      //refresh the list
       emit('success');
     } finally {
       setDrawerProps({ confirmLoading: false });

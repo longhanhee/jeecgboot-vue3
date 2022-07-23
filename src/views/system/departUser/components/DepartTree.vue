@@ -2,10 +2,10 @@
   <div class="bg-white m-4 mr-0 overflow-hidden">
     <a-spin :spinning="loading">
       <template v-if="userIdentity === '2'">
-        <!--组织机构树-->
+        <!--Organizational tree-->
         <BasicTree
           v-if="!treeReloading"
-          title="部门列表"
+          :title="t('system.depart.departmentList')"
           toolbar
           search
           showLine
@@ -20,7 +20,7 @@
           @search="onSearch"
         />
       </template>
-      <a-empty v-else description="普通员工无此权限" />
+      <a-empty v-else :description="t('system.depart.noPermission')" />
     </a-spin>
   </div>
 </template>
@@ -30,26 +30,27 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { BasicTree } from '/@/components/Tree';
   import { queryMyDepartTreeList, searchByKeywords } from '../depart.user.api';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const prefixCls = inject('prefixCls');
   const emit = defineEmits(['select']);
   const { createMessage } = useMessage();
 
   let loading = ref<boolean>(false);
-  // 部门树列表数据
+  // Department Tree List Data
   let treeData = ref<any[]>([]);
-  // 当前展开的项
+  // The current item
   let expandedKeys = ref<any[]>([]);
-  // 当前选中的项
+  // The current item selected
   let selectedKeys = ref<any[]>([]);
-  // 是否自动展开父级
+  // Whether to automatically start the parent level
   let autoExpandParent = ref<boolean>(true);
-  // 用户身份
+  // user ID
   let userIdentity = ref<string>('2');
-  // 树组件重新加载
+  // Tree component reload
   let treeReloading = ref<boolean>(false);
 
-  // 加载部门信息
+  // Loading department information
   function loadDepartTreeData() {
     loading.value = true;
     treeData.value = [];
@@ -70,7 +71,7 @@
 
   loadDepartTreeData();
 
-  // 自动展开父节点，只展开一级
+  // Open the parent node automatically, only one level
   function autoExpandParentNode() {
     let keys: Array<any> = [];
     treeData.value.forEach((item, index) => {
@@ -78,7 +79,7 @@
         keys.push(item.key);
       }
       if (index === 0) {
-        // 默认选中第一个
+        // Select the first one by default
         setSelectedKey(item.id, item);
       }
     });
@@ -88,7 +89,7 @@
     }
   }
 
-  // 重新加载树组件，防止无法默认展开数据
+  // Re -load tree components to prevent the data from default
   async function reloadTree() {
     await nextTick();
     treeReloading.value = true;
@@ -97,7 +98,7 @@
   }
 
   /**
-   * 设置当前选中的行
+   * Set the current selected line
    */
   function setSelectedKey(key: string, data?: object) {
     selectedKeys.value = [key];
@@ -106,7 +107,7 @@
     }
   }
 
-  // 搜索事件
+  // Search event
   function onSearch(value: string) {
     if (value) {
       loading.value = true;
@@ -115,7 +116,7 @@
           if (Array.isArray(result)) {
             treeData.value = result;
           } else {
-            createMessage.warning('未查询到部门信息');
+            createMessage.warning(t('system.depart.warning.noInquiryWarning'));
             treeData.value = [];
           }
         })
@@ -125,17 +126,17 @@
     }
   }
 
-  // 树选择事件
+  // Tree selection event
   function onSelect(selKeys, event) {
     if (selKeys.length > 0 && selectedKeys.value[0] !== selKeys[0]) {
       setSelectedKey(selKeys[0], event.selectedNodes[0].props);
     } else {
-      // 这样可以防止用户取消选择
+      // This can prevent users from canceling the choice
       setSelectedKey(selectedKeys.value[0]);
     }
   }
 
-  // 树展开事件
+  // Tree unfolding incident
   function onExpand(keys) {
     expandedKeys.value = keys;
     autoExpandParent.value = false;

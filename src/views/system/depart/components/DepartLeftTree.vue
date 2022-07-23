@@ -1,26 +1,26 @@
 <template>
   <a-card :bordered="false" style="height: 100%">
     <div class="j-table-operator" style="width: 100%">
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddDepart">新增</a-button>
-      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart()">添加下级</a-button>
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddDepart">{{ t('system.depart.newlyIncrease') }}</a-button>
+      <a-button type="primary" preIcon="ant-design:plus-outlined" @click="onAddChildDepart()">{{ t('system.depart.addLowerLevel') }}</a-button>
       <a-upload name="file" :showUploadList="false" :customRequest="onImportXls">
-        <a-button type="primary" preIcon="ant-design:import-outlined">导入</a-button>
+        <a-button type="primary" preIcon="ant-design:import-outlined">{{ t('common.import') }}</a-button>
       </a-upload>
-      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">导出</a-button>
-      <a-button type="primary" preIcon="ant-design:sync-outlined">同步企微?</a-button>
-      <a-button type="primary" preIcon="ant-design:sync-outlined">同步钉钉?</a-button>
+      <a-button type="primary" preIcon="ant-design:export-outlined" @click="onExportXls">{{ t('common.export') }}</a-button>
+      <a-button type="primary" preIcon="ant-design:sync-outlined">{{ t('system.depart.synchronousNail') }}</a-button>
+      <a-button type="primary" preIcon="ant-design:sync-outlined">{{ t('system.depart.synchronousEnterpriseMicro') }}</a-button>
       <template v-if="checkedKeys.length > 0">
         <a-dropdown>
           <template #overlay>
             <a-menu>
               <a-menu-item key="1" @click="onDeleteBatch">
                 <icon icon="ant-design:delete-outlined" />
-                <span>删除</span>
+                <span>{{ t('common.delete') }}</span>
               </a-menu-item>
             </a-menu>
           </template>
           <a-button>
-            <span>批量操作 </span>
+            <span>{{ t('common.batchOperation') }} </span>
             <icon icon="akar-icons:chevron-down" />
           </a-button>
         </a-dropdown>
@@ -29,18 +29,18 @@
     <a-alert type="info" show-icon class="alert" style="margin-bottom: 8px">
       <template #message>
         <template v-if="checkedKeys.length > 0">
-          <span>已选中 {{ checkedKeys.length }} 条记录</span>
+          <span>{{ t('common.selected') }} {{ checkedKeys.length }} {{ t('common.records') }}</span>
           <a-divider type="vertical" />
-          <a @click="checkedKeys = []">清空</a>
+          <a @click="checkedKeys = []">{{ t('common.empty') }}</a>
         </template>
         <template v-else>
-          <span>未选中任何数据</span>
+          <span>{{ t('common.noData') }}</span>
         </template>
       </template>
     </a-alert>
     <a-spin :spinning="loading">
-      <a-input-search placeholder="按部门名称搜索…" style="margin-bottom: 10px" @search="onSearch" />
-      <!--组织机构树-->
+      <a-input-search :placeholder="t('system.depart.searchDepartment')" style="margin-bottom: 10px" @search="onSearch" />
+      <!--Organizational tree-->
       <template v-if="treeData.length > 0">
         <a-tree
           v-if="!treeReloading"
@@ -59,9 +59,9 @@
             <a-dropdown :trigger="['contextmenu']">
               <Popconfirm
                 :visible="visibleTreeKey === treeKey"
-                title="确定要删除吗？"
-                ok-text="确定"
-                cancel-text="取消"
+                :title="t('system.depart.warning.deleteWarning')"
+                :ok-text="t('common.confirm')"
+                :cancel-text="t('common.cancel')"
                 placement="rightTop"
                 @confirm="onDelete(dataRef)"
                 @visibleChange="onVisibleChange"
@@ -71,9 +71,9 @@
 
               <template #overlay>
                 <a-menu @click="">
-                  <a-menu-item key="1" @click="onAddChildDepart(dataRef)">添加子级</a-menu-item>
+                  <a-menu-item key="1" @click="onAddChildDepart(dataRef)">{{ t('system.depart.addSublevel') }}</a-menu-item>
                   <a-menu-item key="2" @click="visibleTreeKey = treeKey">
-                    <span style="color: red">删除</span>
+                    <span style="color: red">{{ t('common.delete') }}</span>
                   </a-menu-item>
                 </a-menu>
               </template>
@@ -81,7 +81,7 @@
           </template>
         </a-tree>
       </template>
-      <a-empty v-else description="暂无数据" />
+      <a-empty v-else :description="t('common.noData')" />
     </a-spin>
     <DepartFormModal :rootTreeData="treeData" @register="registerModal" @success="loadRootTreeData" />
   </a-card>
@@ -96,36 +96,37 @@
   import { searchByKeywords } from '/@/views/system/departUser/depart.user.api';
   import DepartFormModal from '/@/views/system/depart/components/DepartFormModal.vue';
   import { Popconfirm } from 'ant-design-vue';
-
+  import { useI18n } from '/@/hooks/web/useI18n';
+  const { t } = useI18n();
   const prefixCls = inject('prefixCls');
   const emit = defineEmits(['select', 'rootTreeData']);
   const { createMessage } = useMessage();
   const { handleImportXls, handleExportXls } = useMethods();
 
   const loading = ref<boolean>(false);
-  // 部门树列表数据
+  // Department Tree List Data
   const treeData = ref<any[]>([]);
-  // 当前选中的项
+  // The current item selected
   const checkedKeys = ref<any[]>([]);
-  // 当前展开的项
+  // The current item
   const expandedKeys = ref<any[]>([]);
-  // 当前选中的项
+  // The current item selected
   const selectedKeys = ref<any[]>([]);
-  // 树组件重新加载
+  // Tree component reloadmponent reload
   const treeReloading = ref<boolean>(false);
-  // 树父子是否关联
+  // Whether the tree father and son are related
   const checkStrictly = ref<boolean>(true);
-  // 当前选中的部门
+  // The current selected department
   const currentDepart = ref<any>(null);
-  // 控制确认删除提示框是否显示
+  // Control confirmation The deletion prompt box is displayed
   const visibleTreeKey = ref<any>(null);
-  // 搜索关键字
+  // search for the keyword
   const searchKeyword = ref('');
 
-  // 注册 modal
+  // register modal
   const [registerModal, { openModal }] = useModal();
 
-  // 加载顶级部门信息
+  // Load the top department information
   async function loadRootTreeData() {
     try {
       loading.value = true;
@@ -140,7 +141,7 @@
         if (selectedKeys.value.length === 0) {
           let item = treeData.value[0];
           if (item) {
-            // 默认选中第一个
+            // Select the first one by default
             setSelectedKey(item.id, item);
           }
         } else {
@@ -155,7 +156,7 @@
 
   loadRootTreeData();
 
-  // 加载子级部门信息
+  // Loading sub -department information
   async function loadChildrenTreeData(treeNode) {
     try {
       const result = await queryDepartTreeSync({
@@ -166,7 +167,7 @@
       } else {
         treeNode.dataRef.children = result;
         if (expandedKeys.value.length > 0) {
-          // 判断获取的子级是否有当前展开的项
+          // Determine whether the child -level sub -level has the current item
           let subKeys: any[] = [];
           for (let key of expandedKeys.value) {
             if (result.findIndex((item) => item.id === key) !== -1) {
@@ -186,14 +187,14 @@
     return Promise.resolve();
   }
 
-  // 自动展开父节点，只展开一级
+  // Open the parent node automatically, only one level
   function autoExpandParentNode() {
     let item = treeData.value[0];
     if (item) {
       if (!item.isLeaf) {
         expandedKeys.value = [item.key];
       }
-      // 默认选中第一个
+      // Select the first one by default
       setSelectedKey(item.id, item);
       reloadTree();
     } else {
@@ -201,7 +202,7 @@
     }
   }
 
-  // 重新加载树组件，防止无法默认展开数据
+  // Re -load tree components to prevent the data from default
   async function reloadTree() {
     await nextTick();
     treeReloading.value = true;
@@ -210,7 +211,7 @@
   }
 
   /**
-   * 设置当前选中的行
+   * Set the current selected line
    */
   function setSelectedKey(key: string, data?: object) {
     selectedKeys.value = [key];
@@ -220,22 +221,22 @@
     }
   }
 
-  // 添加一级部门
+  // Add first -level department
   function onAddDepart() {
     openModal(true, { isUpdate: false, isChild: false });
   }
 
-  // 添加子级部门
+  // Add sub -level department
   function onAddChildDepart(data = currentDepart.value) {
     if (data == null) {
-      createMessage.warning('请先选择一个部门');
+      createMessage.warning(t('system.depart.warning.departmentChoose'));
       return;
     }
     const record = { parentId: data.id };
     openModal(true, { isUpdate: false, isChild: true, record });
   }
 
-  // 搜索事件
+  // Search event
   async function onSearch(value: string) {
     if (value) {
       try {
@@ -255,7 +256,7 @@
     searchKeyword.value = value;
   }
 
-  // 树复选框选择事件
+  // Tree re -selection box selection event
   function onCheck(e) {
     if (Array.isArray(e)) {
       checkedKeys.value = e;
@@ -264,20 +265,20 @@
     }
   }
 
-  // 树选择事件
+  // Tree selection event
   function onSelect(selKeys, event) {
     if (selKeys.length > 0 && selectedKeys.value[0] !== selKeys[0]) {
       setSelectedKey(selKeys[0], event.selectedNodes[0].props);
     } else {
-      // 这样可以防止用户取消选择
+      // This can prevent users from canceling the choice
       setSelectedKey(selectedKeys.value[0]);
     }
   }
 
   /**
-   * 根据 ids 删除部门
+   * Delete department according to IDS
    * @param idListRef array
-   * @param confirm 是否显示确认提示框
+   * @param confirm Whether to display the confirmation prompt box
    */
   async function doDeleteDepart(idListRef, confirm = true) {
     const idList = unref(idListRef);
@@ -292,7 +293,7 @@
     }
   }
 
-  // 删除单个部门
+  // Delete a single department
   async function onDelete(data) {
     if (data) {
       onVisibleChange(false);
@@ -300,7 +301,7 @@
     }
   }
 
-  // 批量删除部门
+  // Batch deletion department
   async function onDeleteBatch() {
     try {
       await doDeleteDepart(checkedKeys);
@@ -322,7 +323,7 @@
   }
 
   function onExportXls() {
-    handleExportXls('部门信息', Api.exportXlsUrl);
+    handleExportXls(t('system.depart.departInformation'), Api.exportXlsUrl);
   }
 
   defineExpose({
